@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { isValidEmail, normalizeEmail } from "./email";
+import { isValidEmail, normalizeEmail, sendWelcomeEmail } from "./email";
 
 /**
  * POST-redirect-GET: l'action non ritorna nulla al client, redirige sulla
@@ -26,11 +26,18 @@ export async function joinWishlist(formData: FormData) {
     redirect(`/wishlist?${new URLSearchParams({ error: "invalid", email })}`);
   }
 
-  // TODO: persistere l'iscrizione (database o servizio di mailing list).
-  // Finché non c'è uno storage configurato l'indirizzo non viene salvato da
-  // nessuna parte: la schermata di conferma è vera solo a metà.
-  console.log(`[wishlist] ${email}`);
+  // Il webhook n8n è al momento l'unico posto dove l'iscrizione finisce: se non
+  // risponde non c'è niente da confermare, quindi l'errore si vede invece di
+  // mostrare una conferma falsa. `redirect` sta nel `catch`, cioè fuori dal
+  // `try`: lancia per interrompere l'action e verrebbe scambiato per un errore.
+  try {
+    await sendWelcomeEmail(email);
+  } catch (error) {
+    // Nei log l'errore per intero (status e risposta di n8n), nell'URL solo il
+    // codice: il dettaglio non riguarda chi si sta iscrivendo.
+    console.error(`[wishlist] invio fallito per ${email}`, error);
+    redirect(`/wishlist?${new URLSearchParams({ error: "send", email })}`);
+  }
 
-  // `redirect` lancia per interrompere l'action: va tenuto fuori da try/catch.
   redirect(`/wishlist?${new URLSearchParams({ joined: email })}`);
 }

@@ -1,0 +1,15 @@
+Sei nella lista
+
+Grazie per esserti iscritto alla wishlist di Rysonance. Abbiamo registrato
+l'indirizzo {{email}} e ti scriveremo qui non appena ci sara' qualcosa da
+condividere.
+
+Nessuna newsletter settimanale, nessuno spam: una sola mail, quella che conta.
+
+Scopri Rysonance: https://rysonancerpg.com
+
+--
+Non ti sei iscritto tu? Ignora questa mail: senza conferma da parte tua non
+riceverai altro.
+
+Cancella l'iscrizione: {{unsubscribeUrl}}
