@@ -1,0 +1,162 @@
+/*
+ * Animazione d'ingresso del logo, CSS-only: il componente resta un Server
+ * Component e non spedisce un byte di JS.
+ *
+ * Sequenza (~1.6s): il contorno del simbolo si disegna, il pieno sfuma dentro
+ * mentre il contorno svanisce, un'onda di risonanza parte dal bordo del disco e
+ * il lettering entra in stagger da sinistra, come se fosse l'onda a scoprirlo.
+ *
+ * Ogni regola parte dallo stato FINALE e usa `backwards`/`forwards` per lo
+ * stato iniziale: così con `prefers-reduced-motion` basta spegnere le
+ * animazioni e il logo resta visibile e corretto, senza duplicare gli stili.
+ */
+
+.logo {
+  /* le onde escono dal viewBox, che è stretto attorno al simbolo */
+  overflow: visible;
+}
+
+/* --- contorno che si disegna ------------------------------------------ */
+
+/*
+ * Copia del simbolo in sola linea. `pathLength="1"` normalizza la lunghezza
+ * complessiva dei sei sottotracciati, così `stroke-dasharray`/`dashoffset`
+ * lavorano su 0→1 senza dover misurare il path a runtime. Base `opacity: 0`:
+ * è puro ornamento, se le animazioni sono spente non deve comparire.
+ */
+.trace {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 0;
+  animation: draw 1.3s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+@keyframes draw {
+  0% {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+  6% {
+    opacity: 0.85;
+  }
+  65% {
+    stroke-dashoffset: 0;
+    opacity: 0.85;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+/* --- simbolo pieno ----------------------------------------------------- */
+
+.mark {
+  /* senza fill-box l'origine sarebbe quella del viewBox, non del simbolo */
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.25, 1);
+  animation: mark-in 0.8s cubic-bezier(0.2, 0.8, 0.25, 1) 0.6s backwards;
+}
+
+@keyframes mark-in {
+  from {
+    fill-opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    fill-opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.logo:hover .mark {
+  transform: scale(1.05);
+}
+
+/* --- onde di risonanza ------------------------------------------------- */
+
+.rings circle {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  /* la linea resta di 1px mentre l'onda si allarga, invece di ingrassare */
+  vector-effect: non-scaling-stroke;
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  animation: ripple 3.6s cubic-bezier(0.2, 0.6, 0.3, 1) 1.35s infinite;
+}
+
+/* mezzo ciclo di sfasamento: un'onda ogni 1.8s */
+.rings circle:nth-child(2) {
+  animation-delay: 3.15s;
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(1);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.4;
+  }
+  55%,
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+/* --- lettering --------------------------------------------------------- */
+
+.letters path {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: letter-in 0.6s cubic-bezier(0.2, 0.8, 0.25, 1) backwards;
+}
+
+@keyframes letter-in {
+  from {
+    opacity: 0;
+    /* percentuali su fill-box: ogni lettera si sposta in proporzione a sé */
+    transform: translate(-8%, 12%) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.letters path:nth-child(1) { animation-delay: 1.05s; }
+.letters path:nth-child(2) { animation-delay: 1.115s; }
+.letters path:nth-child(3) { animation-delay: 1.18s; }
+.letters path:nth-child(4) { animation-delay: 1.245s; }
+.letters path:nth-child(5) { animation-delay: 1.31s; }
+.letters path:nth-child(6) { animation-delay: 1.375s; }
+.letters path:nth-child(7) { animation-delay: 1.44s; }
+.letters path:nth-child(8) { animation-delay: 1.505s; }
+.letters path:nth-child(9) { animation-delay: 1.57s; }
+
+/* ----------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .trace,
+  .mark,
+  .rings circle,
+  .letters path {
+    animation: none;
+  }
+
+  .mark {
+    transition: none;
+  }
+
+  .logo:hover .mark {
+    transform: none;
+  }
+}
