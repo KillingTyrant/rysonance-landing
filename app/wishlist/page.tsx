@@ -1,12 +1,23 @@
+import Link from "next/link";
 import { Logo } from "@/components/logo";
 import { joinWishlist } from "./actions";
+import {
+    ATTRIBUTION_FIELDS,
+    readAttribution,
+    type Attribution,
+} from "./attribution";
 import { isValidEmail, normalizeEmail } from "./email";
+import { HONEYPOT_FIELD } from "./form";
 import { first } from "./params";
 
 const ERRORS: Record<string, string> = {
     empty: "Enter your email address.",
     invalid: "That doesn't look like a valid email address.",
-    send: "Something went wrong on our side. Please try again.",
+    // L'invio della mail non compare qui: se il benvenuto non parte
+    // l'iscrizione è comunque registrata, quindi si mostra la conferma e
+    // l'esito resta su `welcome_status` in Supabase. Un errore qui inviterebbe
+    // a riprovare qualcosa che è già riuscito.
+    save: "Something went wrong on our side. Please try again.",
 };
 
 export default async function Wishlist({ searchParams }: PageProps<"/wishlist">) {
@@ -27,16 +38,42 @@ export default async function Wishlist({ searchParams }: PageProps<"/wishlist">)
                 {confirmed ? (
                     <Confirmation email={confirmed} />
                 ) : (
-                    <SignupForm email={first(params.email)} error={error} />
+                    <SignupForm
+                        email={first(params.email)}
+                        error={error}
+                        attribution={await readAttribution(params)}
+                    />
                 )}
             </main>
         </div>
     );
 }
 
-function SignupForm({ email, error }: { email: string; error: string }) {
+function SignupForm({
+    email,
+    error,
+    attribution,
+}: {
+    email: string;
+    error: string;
+    attribution: Attribution;
+}) {
     return (
         <form action={joinWishlist} className="mt-10 w-full">
+            {/*
+              * Da dove arriva chi si iscrive. Sta qui e non negli header
+              * perché il POST dell'action parte da questa pagina: letto di
+              * là, `referer` direbbe sempre "/wishlist".
+              */}
+            {ATTRIBUTION_FIELDS.map((field) => (
+                <input
+                    key={field}
+                    type="hidden"
+                    name={field}
+                    value={attribution[field]}
+                />
+            ))}
+
             <label
                 htmlFor="email"
                 className="block max-w-sm text-sm font-medium text-zinc-900 dark:text-zinc-100"
@@ -44,7 +81,7 @@ function SignupForm({ email, error }: { email: string; error: string }) {
                 Aggiungi alla wishlist
             </label>
             <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                Ti invieremo un'email non appena Rysonance sarà pronto.
+                Ti invieremo un&apos;email non appena Rysonance sarà pronto.
             </p>
 
             <div className="mt-4 flex flex-col gap-3 sm:flex-row">
@@ -73,6 +110,43 @@ function SignupForm({ email, error }: { email: string; error: string }) {
                 className="mt-2 min-h-5 text-sm text-red-600 dark:text-red-400"
             >
                 {error}
+            </p>
+
+            {/*
+              * Campo esca: `type="text"` e non `hidden`, perché un bot che
+              * riempie ogni input deve poterlo vedere. Sparisce con
+              * `sr-only` + `aria-hidden`, resta fuori dalla tabulazione con
+              * `tabIndex={-1}`, e non ha una `<label>`: chi usa uno screen
+              * reader non lo incontra. `autoComplete="off"` tiene alla larga
+              * l'autofill, che compilandolo scarterebbe una persona vera.
+              */}
+            <div aria-hidden="true" className="sr-only">
+                <label htmlFor={HONEYPOT_FIELD}>Non compilare questo campo</label>
+                <input
+                    id={HONEYPOT_FIELD}
+                    name={HONEYPOT_FIELD}
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    defaultValue=""
+                />
+            </div>
+
+            {/*
+              * L'informativa va raggiungibile dal punto in cui si presta il
+              * consenso, non solo da un footer: qui si sta per lasciare un
+              * indirizzo, ed è qui che serve sapere che fine fa.
+              */}
+            <p className="mt-4 text-xs text-zinc-500 dark:text-zinc-400">
+                Iscrivendoti accetti che tratteniamo il tuo indirizzo per
+                avvisarti al lancio. Leggi l&apos;
+                <Link
+                    href="/privacy"
+                    className="underline underline-offset-2 hover:text-zinc-900 dark:hover:text-zinc-100"
+                >
+                    informativa privacy
+                </Link>
+                .
             </p>
         </form>
     );
