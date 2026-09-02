@@ -1,16 +1,13 @@
 import { Logo } from "@/components/logo";
 import { joinWishlist } from "./actions";
 import { isValidEmail, normalizeEmail } from "./email";
+import { first } from "./params";
 
 const ERRORS: Record<string, string> = {
     empty: "Enter your email address.",
     invalid: "That doesn't look like a valid email address.",
     send: "Something went wrong on our side. Please try again.",
 };
-
-function first(value: string | string[] | undefined): string {
-    return Array.isArray(value) ? (value[0] ?? "") : (value ?? "");
-}
 
 export default async function Wishlist({ searchParams }: PageProps<"/wishlist">) {
     const params = await searchParams;
