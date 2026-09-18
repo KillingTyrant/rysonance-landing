@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { HomeBackground } from "@/components/layout/HomeBackground";
 import { Logo } from "@/components/logo";
 import { joinWishlist } from "./actions";
 import {
@@ -32,8 +33,9 @@ export default async function Wishlist({ searchParams }: PageProps<"/wishlist">)
     const error = ERRORS[first(params.error)] ?? "";
 
     return (
-        <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-            <main className="flex flex-1 max-w-3xl w-full flex-col items-center justify-center  align-middle p-16 bg-white dark:bg-black sm:items-start">
+        <div className="relative flex flex-col flex-1 items-center justify-center font-sans">
+            <HomeBackground />
+            <main className="flex flex-1 max-w-3xl w-full flex-col items-center justify-center  align-middle p-16 sm:items-start">
                 <Logo iconOnly={true} />
                 {confirmed ? (
                     <Confirmation email={confirmed} />
