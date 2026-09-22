@@ -40,6 +40,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        {/* Snippet iubenda: deve essere un <script> sincrono nell'HTML del server, altrimenti la verifica
+            di iubenda non lo trova e il blocco automatico non intercetta gli script caricati prima. */}
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        <script
+          type="text/javascript"
+          src="https://embeds.iubenda.com/widgets/4ea21609-1c76-4e60-8134-efb44dfc2113.js"
+        />
+      </head>
       <body className="min-h-full flex flex-col">
         <ThemeProvider>{children}</ThemeProvider>
         <footer className="mx-auto mt-8 mb-6 flex w-full max-w-5xl items-center justify-center gap-4 px-6 text-sm text-zinc-500">
@@ -62,11 +71,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Script
           id="iubenda-core"
           src="https://cdn.iubenda.com/iubenda.js"
-          strategy="lazyOnload"
-        />
-        <Script
-          id="iubenda-widget"
-          src="https://embeds.iubenda.com/widgets/4ea21609-1c76-4e60-8134-efb44dfc2113.js"
           strategy="lazyOnload"
         />
       </body>
