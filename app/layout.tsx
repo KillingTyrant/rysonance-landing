@@ -42,20 +42,25 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     >
       <head>
         {/* Snippet iubenda: deve essere un <script> sincrono nell'HTML del server, altrimenti la verifica
-            di iubenda non lo trova e il blocco automatico non intercetta gli script caricati prima. */}
+            di iubenda non lo trova e il blocco automatico non intercetta gli script caricati prima.
+            Prima dell'idratazione il widget inserisce in <head> un altro <script> (core-it.js) senza
+            async, che React abbina a questo: da qui suppressHydrationWarning. */}
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
         <script
           type="text/javascript"
           src="https://embeds.iubenda.com/widgets/4ea21609-1c76-4e60-8134-efb44dfc2113.js"
+          suppressHydrationWarning
         />
       </head>
       <body className="min-h-full flex flex-col">
         <ThemeProvider>{children}</ThemeProvider>
         <footer className="mx-auto mt-8 mb-6 flex w-full max-w-5xl items-center justify-center gap-4 px-6 text-sm text-zinc-500">
+          {/* iubenda modifica questi link (es. data-cmp-ab) prima dell'idratazione. */}
           <a
             href="https://www.iubenda.com/privacy-policy/23677761"
             className="iubenda-white iubenda-noiframe iubenda-embed underline underline-offset-2 hover:text-zinc-900"
             title="Privacy Policy"
+            suppressHydrationWarning
           >
             Privacy Policy
           </a>
@@ -64,6 +69,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             href="https://www.iubenda.com/privacy-policy/23677761/cookie-policy"
             className="iubenda-white iubenda-noiframe iubenda-embed underline underline-offset-2 hover:text-zinc-900"
             title="Cookie Policy"
+            suppressHydrationWarning
           >
             Cookie Policy
           </a>
