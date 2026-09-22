@@ -62,12 +62,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Script
           id="iubenda-core"
           src="https://cdn.iubenda.com/iubenda.js"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
         <Script
           id="iubenda-widget"
           src="https://embeds.iubenda.com/widgets/4ea21609-1c76-4e60-8134-efb44dfc2113.js"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
       </body>
     </html>
