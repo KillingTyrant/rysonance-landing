@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 
 /** Lo stesso footer di rysonance-quest, con la privacy e cookie policy iubenda di questo sito. */
@@ -5,6 +6,12 @@ export function Footer() {
   return (
     <footer className="w-full flex flex-wrap items-center justify-center border-t border-border mx-auto px-4 text-center text-xs font-sans bg-card/60 backdrop-blur-sm gap-4">
       <p>Powered by Rysonance all rights reserved. 2026</p>
+      <Link
+        href="/wishlist"
+        className="font-medium underline underline-offset-2 hover:text-foreground/70"
+      >
+        Wishlist
+      </Link>
       {/* suppressHydrationWarning: il widget iubenda in <head> modifica questi link
           (es. data-cmp-ab) prima dell'idratazione. */}
       <a

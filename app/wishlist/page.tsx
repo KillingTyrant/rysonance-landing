@@ -36,7 +36,16 @@ export default async function Wishlist({ searchParams }: PageProps<"/wishlist">)
         <div className="relative flex flex-col flex-1 items-center justify-center font-sans">
             <HomeBackground />
             <main className="flex flex-1 max-w-3xl w-full flex-col items-center justify-center  align-middle p-16 sm:items-start">
-                <Logo iconOnly={true} />
+                {/*
+                  * Il simbolo prende solo lo spazio che resta, così la pagina non
+                  * scorre: al massimo la colonna (40rem), altrimenti l'altezza dello
+                  * schermo meno padding, form e footer (24rem; 32rem sotto `sm`, dove
+                  * form e footer vanno a capo).
+                  */}
+                <Logo
+                    iconOnly={true}
+                    className="h-auto w-[max(6rem,min(100%,40rem,calc(100dvh_-_32rem)))] sm:w-[max(6rem,min(100%,40rem,calc(100dvh_-_24rem)))]"
+                />
                 {confirmed ? (
                     <Confirmation email={confirmed} />
                 ) : (
