@@ -13,17 +13,17 @@ export default async function Wishlist({ searchParams }: PageProps<"/wishlist">)
   const params = await searchParams;
 
   return (
-    <main className="flex flex-1 flex-col bg-burgundy font-sans text-white [--ticket-ink:var(--color-burgundy)]">
+    <main className="flex flex-1 flex-col bg-burgundy font-sans text-white">
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col px-5 pt-8 pb-10">
         <Link href="/" aria-label="Torna alla home di Rysonance" className="mx-auto">
           <Logo variant="wordmark" className="h-auto w-44" />
         </Link>
 
         <div className="my-auto py-12">
-          <h1 className="text-center text-[31px] leading-[0.97] font-bold text-balance">
+          <h1 className="text-center text-[1.9375rem] leading-[0.97] font-bold text-balance">
             Unisciti alla wishlist
           </h1>
-          <p className="mt-4 text-center text-[15px] leading-snug text-white/80">
+          <p className="mt-4 text-center text-[0.9375rem] leading-snug text-white/80">
             Ti invieremo un’email non appena Rysonance sarà pronto.
           </p>
           <div className="mt-10">

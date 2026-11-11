@@ -5,7 +5,7 @@
  * sceglie i propri fondi da qui.
  */
 @theme {
-  --color-burgundy: #390716;
+  --color-burgundy: #3f0517;
   --color-ink: #191c24;
   --color-coal: #1a1a1a;
   --color-paper: #f6f6f6;
@@ -15,6 +15,30 @@
 @theme inline {
   --font-sans: var(--font-cabinet);
   --font-display: var(--font-sprat);
+}
+
+/*
+ * I layout desktop sono disegnati su 1440px. Oltre quella larghezza la pagina
+ * cresce in proporzione invece di restare una colonna di 960px in mezzo allo
+ * schermo: la dimensione base segue la finestra (16px a 1440, 21,33px a 1920,
+ * dove si ferma) e con lei tutto ciò che è in rem — testi, spazi, contenitori.
+ * Per questo le misure desktop delle pagine sono in rem e non in px. Sotto i
+ * 1440 vince `100%`, che rispetta anche chi ha alzato il testo nel browser.
+ */
+html {
+  font-size: clamp(100%, 100vw / 90, 133.333%);
+}
+
+/*
+ * Tailwind 4 riporta i bottoni al cursore `default` del browser: qui torna la
+ * manina su tutto ciò che si può premere (il bottone della wishlist, i
+ * controlli dello slider).
+ */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
 }
 
 body {

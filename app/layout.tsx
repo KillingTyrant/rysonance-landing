@@ -43,7 +43,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   // La barra del browser su mobile prende il colore dell'intestazione.
-  themeColor: "#390716",
+  themeColor: "#3f0517",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

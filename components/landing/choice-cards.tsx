@@ -28,7 +28,7 @@ const CHOICES = [
 export function ChoiceCards() {
   return (
     <fieldset className="group/choices">
-      <legend className="text-[15px] leading-snug text-white/80">
+      <legend className="text-[0.9375rem] leading-snug text-white/80">
         Qualcosa sta nascendo oltre i confini delle mappe conosciute.{" "}
         <span className="font-bold text-white">Cosa fai?</span>
       </legend>
@@ -37,7 +37,7 @@ export function ChoiceCards() {
         {CHOICES.map((choice) => (
           <label
             key={choice.key}
-            className={`relative flex min-h-64 cursor-pointer flex-col justify-between overflow-hidden rounded-[18px] border-2 border-white/5 p-5 transition duration-200 hover:border-white/30 has-[:checked]:border-gold has-[:checked]:shadow-[0_0_0_4px_rgb(250_181_19/0.15)] has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-4 has-[:focus-visible]:outline-white motion-safe:hover:-translate-y-0.5 md:min-h-80 ${choice.tint}`}
+            className={`relative flex min-h-64 cursor-pointer flex-col justify-between overflow-hidden rounded-[1.125rem] border-2 border-white/5 p-5 transition duration-200 hover:border-white/30 has-[:checked]:border-gold has-[:checked]:shadow-[0_0_0_4px_rgb(250_181_19/0.15)] has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-4 has-[:focus-visible]:outline-white motion-safe:hover:-translate-y-0.5 md:min-h-80 ${choice.tint}`}
           >
             <input
               type="radio"
@@ -69,7 +69,7 @@ export function ChoiceCards() {
       {/* Compare dopo la scelta: qualunque sia, il punto è che conta. */}
       <p
         aria-live="polite"
-        className="mt-5 hidden text-[15px] leading-snug text-white/80 group-has-[:checked]/choices:block"
+        className="mt-5 hidden text-[0.9375rem] leading-snug text-white/80 group-has-[:checked]/choices:block"
       >
         <span className="font-bold text-gold">Ottima scelta.</span> In
         Rysonance il mondo è influenzato dalle tue scelte e da quelle dei tuoi

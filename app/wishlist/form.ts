@@ -18,9 +18,9 @@ export const HONEYPOT_FIELD = "_gotcha";
 export const CONSENT_FIELD = "consent";
 
 /**
- * Quale form è stato inviato. La landing ne ha uno per sezione, e l'esito
- * (errore o conferma) deve tornare in quello che si è appena usato, non in
- * cima alla pagina.
+ * Quale form è stato inviato. La landing ne ha due, in cima e in fondo, e
+ * l'esito (errore o conferma) deve tornare in quello che si è appena usato,
+ * non in cima alla pagina.
  */
 export const ORIGIN_FIELD = "_origin";
 
@@ -29,7 +29,7 @@ export const ORIGIN_FIELD = "_origin";
  * un redirect: costruire l'URL su una stringa libera sarebbe un open
  * redirect, quindi ciò che non è in lista ricade su `/wishlist`.
  */
-export const LANDING_FORMS = ["hero", "esplora", "eco", "immagina"] as const;
+export const LANDING_FORMS = ["hero", "immagina"] as const;
 
 export type FormOrigin = "wishlist" | (typeof LANDING_FORMS)[number];
 

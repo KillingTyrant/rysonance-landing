@@ -1,0 +1,47 @@
+/*
+ * La barra di avanzamento dello slide attivo. È lei a dare il tempo: alla fine
+ * dell'animazione (`animationend`) lo slider passa al successivo. Così mettere
+ * in pausa vuol dire solo fermare l'animazione, e la barra riparte da dove si
+ * era fermata, senza un timer JavaScript da tenere allineato.
+ */
+.fill {
+  transform-origin: left;
+  animation: progress 6s linear forwards;
+}
+
+@keyframes progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/*
+ * In pausa: col pulsante, quando lo slider è fuori dallo schermo, col mouse
+ * sopra (solo dove esiste davvero un hover, non sui touch) e con un controllo
+ * a fuoco da tastiera (`:focus-visible`, così un clic del mouse non lo blocca
+ * per sempre).
+ */
+.paused .fill,
+.slider:has(:focus-visible) .fill {
+  animation-play-state: paused;
+}
+
+@media (hover: hover) {
+  .slider:hover .fill {
+    animation-play-state: paused;
+  }
+}
+
+/*
+ * Movimento ridotto: niente avanzamento automatico. Senza animazione non
+ * arriva mai `animationend`; la barra resta piena a segnare lo slide attivo e
+ * si cambia coi controlli o con lo swipe.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .fill {
+    animation: none;
+  }
+}

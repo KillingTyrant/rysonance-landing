@@ -12,11 +12,9 @@ import { PRIVACY_POLICY_URL } from "./layout/iubenda";
 import styles from "./wishlist-form.module.css";
 
 /**
- * - `dark`: su bordeaux, inchiostro o carbone — campo traslucido, bottone oro;
+ * - `dark`: su bordeaux, inchiostro o carbone — campo traslucido, bottone oro
+ *   col testo bordeaux;
  * - `light`: sul fondo chiaro — campo bianco, bottone inchiostro.
- *
- * Sul tono scuro il testo del bottone prende `--ticket-ink`, che la sezione
- * imposta al proprio colore di fondo (bordeaux nell'intestazione).
  */
 type Tone = "dark" | "light";
 
@@ -120,12 +118,12 @@ export function WishlistForm({
         defaultValue={mine ? outcome.email : ""}
         aria-invalid={Boolean(error)}
         aria-describedby={error ? errorId : undefined}
-        className={`block h-11 w-full rounded-[10px] border px-4 text-center text-[14px] transition-colors focus:outline-none focus:ring-1 ${t.input}`}
+        className={`block h-11 w-full rounded-[0.625rem] border px-4 text-center text-sm transition-colors focus:outline-none focus:ring-1 ${t.input}`}
       />
 
       <button
         type="submit"
-        className={`${styles.ticket} ${t.button} mt-5 flex h-11 w-full items-center justify-center px-8 text-[17px] font-bold`}
+        className={`${styles.ticket} ${t.button} mt-5 flex h-11 w-full items-center justify-center px-8 text-[1.0625rem] font-bold lg:mt-6 lg:text-xl`}
       >
         Iscriviti alla wishlist
       </button>
@@ -145,7 +143,7 @@ export function WishlistForm({
         * l'invio di aggiornamenti serve un'azione esplicita (GDPR art. 7).
         * L'informativa sta qui, nel punto in cui si lascia l'indirizzo.
         */}
-      <div className={`mt-5 flex items-start gap-3 text-xs leading-snug ${t.consent}`}>
+      <div className={`mt-5 flex items-start gap-3 text-xs leading-snug lg:mt-6 ${t.consent}`}>
         <input
           id={`${anchor}-consent`}
           name={CONSENT_FIELD}
@@ -221,7 +219,7 @@ function Confirmation({
     <div
       id={id}
       role="status"
-      className={`flex w-full scroll-mt-10 items-start gap-3 rounded-[10px] border p-4 text-left ${t.confirm} ${className}`}
+      className={`flex w-full scroll-mt-10 items-start gap-3 rounded-[0.625rem] border p-4 text-left ${t.confirm} ${className}`}
     >
       <svg
         viewBox="0 0 20 20"

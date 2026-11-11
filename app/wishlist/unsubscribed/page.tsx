@@ -54,10 +54,10 @@ export default async function Unsubscribed({
               clipRule="evenodd"
             />
           </svg>
-          <h1 className="mt-5 text-[31px] leading-[0.97] font-bold">
+          <h1 className="mt-5 text-[1.9375rem] leading-[0.97] font-bold">
             Iscrizione cancellata
           </h1>
-          <p className="mt-4 text-[15px] leading-snug text-white/80">
+          <p className="mt-4 text-[0.9375rem] leading-snug text-white/80">
             {confirmed ? (
               <>
                 Abbiamo tolto{" "}

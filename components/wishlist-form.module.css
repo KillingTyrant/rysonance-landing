@@ -41,10 +41,10 @@
   outline-offset: 3px;
 }
 
-/* Su fondo scuro: oro, con il testo nel colore della sezione. */
+/* Su fondo scuro: oro col testo bordeaux, su qualsiasi fondo (anche il carbone). */
 .ticketGold {
   --ticket-bg: var(--color-gold);
-  color: var(--ticket-ink, var(--color-ink));
+  color: var(--color-burgundy);
 }
 
 /* Su fondo chiaro: inchiostro, testo bianco. */
