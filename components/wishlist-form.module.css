@@ -1,0 +1,102 @@
+/*
+ * Il bottone a biglietto dei layout: un rettangolo con i quattro angoli
+ * scavati. La forma sta su un `::before` mascherato e non sul bottone: una
+ * `mask` ritaglia anche l'`outline`, e il focus da tastiera sparirebbe.
+ */
+.ticket {
+  --notch: 0.8rem;
+  position: relative;
+  isolation: isolate;
+  background: none;
+  transition: transform 0.15s ease;
+}
+
+.ticket::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--ticket-bg);
+  transition: filter 0.15s ease;
+  /* un cerchio trasparente per angolo; ogni gradiente copre un quarto */
+  --hole: #0000 var(--notch), #000 calc(var(--notch) + 0.5px);
+  mask:
+    radial-gradient(circle at 0 0, var(--hole)) top left / 51% 51% no-repeat,
+    radial-gradient(circle at 100% 0, var(--hole)) top right / 51% 51% no-repeat,
+    radial-gradient(circle at 0 100%, var(--hole)) bottom left / 51% 51% no-repeat,
+    radial-gradient(circle at 100% 100%, var(--hole)) bottom right / 51% 51%
+      no-repeat;
+}
+
+.ticket:hover::before {
+  filter: brightness(1.08);
+}
+
+.ticket:active {
+  transform: translateY(1px);
+}
+
+.ticket:focus-visible {
+  outline: 2px solid var(--ticket-bg);
+  outline-offset: 3px;
+}
+
+/* Su fondo scuro: oro, con il testo nel colore della sezione. */
+.ticketGold {
+  --ticket-bg: var(--color-gold);
+  color: var(--ticket-ink, var(--color-ink));
+}
+
+/* Su fondo chiaro: inchiostro, testo bianco. */
+.ticketInk {
+  --ticket-bg: var(--color-ink);
+  color: #fff;
+}
+
+.ticketInk:hover::before {
+  filter: brightness(1.6);
+}
+
+/*
+ * Checkbox disegnata: `appearance: none` toglie quella del sistema, il segno
+ * di spunta è un'immagine di sfondo. Il colore del bordo segue `currentColor`.
+ */
+.check {
+  appearance: none;
+  flex: none;
+  width: 1.125rem;
+  height: 1.125rem;
+  margin: 0;
+  border: 1.5px solid currentColor;
+  border-radius: 4px;
+  background: transparent center / 75% no-repeat;
+  cursor: pointer;
+}
+
+.check:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.checkOnDark:checked {
+  background-color: #fff;
+  border-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%23191c24' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.checkOnLight:checked {
+  background-color: var(--color-ink);
+  border-color: var(--color-ink);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%23ffffff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticket,
+  .ticket::before {
+    transition: none;
+  }
+
+  .ticket:active {
+    transform: none;
+  }
+}

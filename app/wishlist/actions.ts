@@ -4,16 +4,26 @@ import { redirect } from "next/navigation";
 import {
   attributionFromForm,
   attributionParams,
+  attributionTags,
   type Attribution,
 } from "./attribution";
-import { readConsent } from "./consent";
-import { isValidEmail, normalizeEmail, sendWelcomeEmail } from "./email";
-import { HONEYPOT_FIELD } from "./form";
-import { markWelcomeFailed, markWelcomeSent, recordSignup } from "./subscribers";
+import { readConsentIp } from "./consent";
+import { isValidEmail, normalizeEmail } from "./email";
+import {
+  CONSENT_FIELD,
+  HONEYPOT_FIELD,
+  ORIGIN_FIELD,
+  formAnchor,
+  originPath,
+  readOrigin,
+  type FormOrigin,
+} from "./form";
+import { subscribe, type MailchimpOutcome } from "./mailchimp";
 
 /**
  * POST-redirect-GET: l'action non ritorna nulla al client, redirige sulla
- * stessa pagina con l'esito negli searchParams. Così l'intera UI resta
+ * pagina da cui è partito il form (la landing o `/wishlist`, vedi
+ * `ORIGIN_FIELD`) con l'esito negli searchParams e l'ancora del form. Così l'intera UI resta
  * server-side — nessun `"use client"`, nessun `useActionState` — e un reload
  * non ri-invia il form.
  *
@@ -24,6 +34,7 @@ import { markWelcomeFailed, markWelcomeSent, recordSignup } from "./subscribers"
 export async function joinWishlist(formData: FormData) {
   const email = normalizeEmail(formData.get("email"));
   const attribution = attributionFromForm(formData);
+  const origin = readOrigin(formData.get(ORIGIN_FIELD));
 
   // Il campo esca è invisibile e fuori dall'ordine di tabulazione: un browser
   // non lo compila, un bot che riempie ogni input sì. Si finge la conferma
@@ -31,41 +42,66 @@ export async function joinWishlist(formData: FormData) {
   // riprova indovina che c'è una trappola. Niente scritture, niente mail.
   if (formData.get(HONEYPOT_FIELD)) {
     console.warn(`[wishlist] honeypot compilato, iscrizione scartata`);
-    redirect(`/wishlist?${new URLSearchParams({ joined: email })}`);
+    done(origin, email);
   }
 
   if (!email) {
-    back({ error: "empty" }, attribution);
+    back(origin, { error: "empty" }, attribution);
   }
 
   if (!isValidEmail(email)) {
     // L'indirizzo torna nell'URL per ripopolare l'input: senza JS il valore
     // digitato andrebbe altrimenti perso a ogni errore.
-    back({ error: "invalid", email }, attribution);
+    back(origin, { error: "invalid", email }, attribution);
   }
 
-  // Prima il database, poi la mail. L'iscrizione è la cosa da non perdere: se il
-  // database non la prende non c'è niente da confermare, e l'errore si vede
-  // invece di mostrare una conferma falsa. `redirect` sta fuori dal `try`:
-  // lancia per interrompere l'action e verrebbe scambiato per un errore.
-  let signup = null;
+  // Una casella non spuntata non arriva proprio nel FormData. Il controllo sta
+  // prima del database: senza consenso non c'è niente da registrare.
+  if (formData.get(CONSENT_FIELD) !== "on") {
+    back(origin, { error: "consent", email }, attribution);
+  }
+
+  // Mailchimp è l'unico posto in cui l'iscrizione esiste: se non la prende non
+  // c'è niente da confermare, e l'errore si vede invece di mostrare una
+  // conferma falsa. Il benvenuto lo manda lui, all'ingresso in lista: da qui
+  // non parte nessuna mail. `redirect` sta fuori dal `try`: lancia per
+  // interrompere l'action e verrebbe scambiato per un errore.
+  let outcome: MailchimpOutcome | null = null;
   try {
-    signup = await recordSignup(email, await readConsent(), attribution);
+    outcome = await subscribe(email, {
+      ip: await readConsentIp(),
+      tags: attributionTags(attribution),
+    });
   } catch (error) {
-    // Nei log l'errore per intero (vincolo violato, connessione rifiutata),
-    // nell'URL solo il codice: il dettaglio non riguarda chi si sta iscrivendo.
-    console.error(`[wishlist] salvataggio fallito per ${email}`, error);
+    // Nei log l'errore per intero (chiave rifiutata, timeout), nell'URL solo
+    // il codice: il dettaglio non riguarda chi si sta iscrivendo.
+    console.error(`[wishlist] iscrizione fallita per ${email}`, error);
   }
 
-  if (!signup) {
-    back({ error: "save", email }, attribution);
+  if (!outcome) {
+    back(origin, { error: "save", email }, attribution);
   }
 
-  if (signup.sendWelcome) {
-    await deliverWelcome(email, signup.id);
+  // Mailchimp scarta gli indirizzi che giudica finti, anche quando passano la
+  // regex: per chi si iscrive è un indirizzo non valido, non un guasto nostro.
+  if (outcome === "rejected") {
+    back(origin, { error: "invalid", email }, attribution);
   }
 
-  redirect(`/wishlist?${new URLSearchParams({ joined: email })}`);
+  done(origin, email);
+}
+
+/**
+ * L'URL di ritorno: la pagina del form, l'esito in query e l'ancora del form
+ * in coda, così la pagina riparte da lì e non dall'inizio.
+ */
+function destination(origin: FormOrigin, query: URLSearchParams): string {
+  return `${originPath(origin)}?${query}#${formAnchor(origin)}`;
+}
+
+/** Conferma: ogni form della pagina mostra che l'indirizzo è in lista. */
+function done(origin: FormOrigin, email: string): never {
+  redirect(destination(origin, new URLSearchParams({ joined: email })));
 }
 
 /**
@@ -76,43 +112,16 @@ export async function joinWishlist(formData: FormData) {
  * TypeScript per sapere che dopo la chiamata non si prosegue.
  */
 function back(
+  origin: FormOrigin,
   outcome: Record<string, string>,
   attribution: Attribution,
 ): never {
   const query = new URLSearchParams({
     ...outcome,
+    // Quale form ha dato l'errore: l'ancora non arriva al server, questo sì.
+    form: origin,
     ...attributionParams(attribution),
   });
 
-  redirect(`/wishlist?${query}`);
-}
-
-/**
- * L'esito dell'invio è una colonna sulla riga, non un errore in faccia a chi
- * si è iscritto: l'iscrizione è già registrata, quindi la conferma è vera
- * anche se il benvenuto non parte. Quello che resta è `welcome_status`, da cui
- * si ricava cosa riprovare.
- *
- * Nessuna delle due scritture di stato può far fallire l'iscrizione, per cui
- * qui non si rilancia mai: al massimo la riga resta `pending` con la mail
- * partita, che è il modo meno dannoso di sbagliare (si rimanda un benvenuto,
- * non si perde un iscritto).
- */
-async function deliverWelcome(email: string, subscriberId: string) {
-  try {
-    await sendWelcomeEmail(email);
-  } catch (error) {
-    console.error(`[wishlist] invio fallito per ${email}`, error);
-    await markWelcomeFailed(subscriberId, error).catch((dbError) =>
-      console.error(
-        `[wishlist] stato invio non aggiornato per ${email}`,
-        dbError,
-      ),
-    );
-    return;
-  }
-
-  await markWelcomeSent(subscriberId).catch((dbError) =>
-    console.error(`[wishlist] stato invio non aggiornato per ${email}`, dbError),
-  );
+  redirect(destination(origin, query));
 }

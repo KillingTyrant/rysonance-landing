@@ -95,16 +95,43 @@ export function attributionFromForm(formData: FormData): Attribution {
   };
 }
 
+// Il nome di un tag su Mailchimp ha un limite di lunghezza: oltre, il tag non
+// si crea. Gli utm_* stanno già sotto i 128, il prefisso li può spingere oltre.
+const TAG_MAX = 100;
+
 /**
- * Le colonne vuote si scrivono null, non stringa vuota: in SQL `is null` è
- * «non lo sappiamo», `= ''` è «sappiamo che è niente».
+ * L'attribuzione come tag Mailchimp (`utm_source:instagram`): i tag si creano
+ * da soli alla prima assegnazione, senza campi da configurare sull'audience, e
+ * servono a fare segmenti per canale. Chi rientra da un altro post ne aggiunge
+ * di nuovi senza perdere i vecchi.
+ *
+ * Del referrer si tiene solo il dominio: è «il sito che ti ha mandato qui»,
+ * come dice l'informativa, e una URL intera si porta dietro query con
+ * identificativi di tracciamento (`fbclid`, `gclid`) che non ci servono.
  */
-export function attributionColumns(
-  attribution: Attribution,
-): Record<Field, string | null> {
-  return Object.fromEntries(
-    ATTRIBUTION_FIELDS.map((field) => [field, attribution[field] || null]),
-  ) as Record<Field, string | null>;
+export function attributionTags(attribution: Attribution): string[] {
+  const tags: string[] = [];
+
+  const host = referrerHost(attribution.referrer);
+  if (host) tags.push(`referrer:${host}`);
+
+  for (const field of ["utm_source", "utm_medium", "utm_campaign"] as const) {
+    if (attribution[field]) tags.push(`${field}:${attribution[field]}`);
+  }
+
+  return tags.map((tag) => tag.slice(0, TAG_MAX));
+}
+
+function referrerHost(referrer: string): string {
+  if (!referrer) return "";
+
+  try {
+    return new URL(referrer).host;
+  } catch {
+    // Arriva da un campo hidden: un valore che non è una URL l'ha scritto
+    // qualcuno a mano, e non è una sorgente.
+    return "";
+  }
 }
 
 /** Solo i campi valorizzati, per rimetterli nella query di un redirect. */

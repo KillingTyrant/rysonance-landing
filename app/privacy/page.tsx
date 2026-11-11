@@ -4,20 +4,23 @@ import { Logo } from "@/components/logo";
 
 /**
  * Informativa privacy (GDPR art. 13), scritta sui dati che la wishlist
- * raccoglie davvero — vedi [supabase.ts](../wishlist/supabase.ts),
+ * raccoglie davvero — vedi [mailchimp.ts](../wishlist/mailchimp.ts),
  * [consent.ts](../wishlist/consent.ts) e
- * [attribution.ts](../wishlist/attribution.ts). Se cambiano le colonne, questa
- * pagina va cambiata con loro: un'informativa che elenca dati diversi da
- * quelli trattati è peggio di nessuna informativa.
+ * [attribution.ts](../wishlist/attribution.ts). Se cambia quello che va a
+ * Mailchimp, questa pagina va cambiata con lui: un'informativa che elenca dati
+ * diversi da quelli trattati è peggio di nessuna informativa.
+ *
+ * Vale anche per le mail, che si scrivono su Mailchimp: il tracciamento di
+ * aperture e clic lì è acceso di default, e questa pagina dice che non c'è
+ * analytics né profilazione. Va spento in ogni mail, o scritto qui.
  *
  * ─────────────────────────────────────────────────────────────────────────
  * DA COMPILARE PRIMA DI PUBBLICARE
  *
  * I valori qui sotto non sono deducibili dal codice e non possono essere
- * inventati: l'identità del titolare è un elemento obbligatorio, e la regione
- * di Supabase decide se c'è o no un trasferimento fuori dall'Unione. Sono
- * scritti fra virgolette basse apposta, così se restano vuoti si vedono sulla
- * pagina pubblicata invece di passare inosservati.
+ * inventati: l'identità del titolare è un elemento obbligatorio. Sono scritti
+ * fra virgolette basse apposta, così se restano vuoti si vedono sulla pagina
+ * pubblicata invece di passare inosservati.
  * ─────────────────────────────────────────────────────────────────────────
  */
 const TITOLARE = {
@@ -26,14 +29,7 @@ const TITOLARE = {
   email: "«indirizzo email per le richieste privacy»",
 };
 
-// Project Settings → General → Region, sulla dashboard Supabase.
-const REGIONE_DATABASE = "«regione del progetto Supabase, es. EU West (Ireland)»";
-
-// Chi consegna materialmente le email: il servizio SMTP o transazionale
-// configurato dentro n8n.
-const PROVIDER_EMAIL = "«nome del servizio di invio email usato da n8n»";
-
-const AGGIORNAMENTO = "2 settembre 2026";
+const AGGIORNAMENTO = "11 novembre 2026";
 
 export const metadata: Metadata = {
   title: "Informativa privacy — Rysonance",
@@ -43,18 +39,26 @@ export const metadata: Metadata = {
 
 export default function Privacy() {
   return (
-    <div className="flex flex-col flex-1 items-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex max-w-3xl w-full flex-col p-16 bg-white dark:bg-black">
-        <Logo iconOnly={true} />
+    <div className="flex flex-1 flex-col bg-paper font-sans text-ink">
+      <header className="bg-burgundy px-5 py-6 text-white">
+        <Link
+          href="/"
+          aria-label="Torna alla home di Rysonance"
+          className="mx-auto block w-fit"
+        >
+          <Logo variant="wordmark" animated={false} className="h-auto w-36" />
+        </Link>
+      </header>
 
-        <h1 className="mt-10 text-2xl font-medium text-zinc-900 dark:text-zinc-100">
+      <main className="mx-auto flex w-full max-w-2xl flex-col px-5 py-12 lg:py-16">
+        <h1 className="text-[31px] leading-[0.97] font-bold">
           Informativa privacy
         </h1>
-        <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="mt-3 text-sm text-ink/60">
           Ultimo aggiornamento: {AGGIORNAMENTO}
         </p>
 
-        <p className="mt-6 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
+        <p className="mt-6 text-[15px] leading-relaxed text-ink/80">
           Questa pagina riguarda un solo trattamento: la wishlist di Rysonance,
           cioè la lista di indirizzi a cui scriveremo quando il gioco sarà
           pronto. Non ci sono account, non ci sono cookie di profilazione e non
@@ -65,7 +69,7 @@ export default function Privacy() {
           <p>
             Il titolare del trattamento è {TITOLARE.nome}, {TITOLARE.indirizzo}.
             Per qualsiasi richiesta relativa ai tuoi dati puoi scrivere a{" "}
-            <span className="font-medium text-zinc-900 dark:text-zinc-100">
+            <span className="font-bold text-ink">
               {TITOLARE.email}
             </span>
             .
@@ -76,29 +80,22 @@ export default function Privacy() {
           <p>Quando ti iscrivi alla wishlist registriamo:</p>
           <ul className="mt-3 list-disc space-y-2 pl-5">
             <li>
-              <strong className="font-medium text-zinc-900 dark:text-zinc-100">
+              <strong className="font-bold text-ink">
                 Il tuo indirizzo email.
               </strong>{" "}
               È l&apos;unico dato che ci dai attivamente, e l&apos;unico senza
               il quale non possiamo avvisarti.
             </li>
             <li>
-              <strong className="font-medium text-zinc-900 dark:text-zinc-100">
-                Data e ora dell&apos;iscrizione, indirizzo IP e browser
-                (user agent).
+              <strong className="font-bold text-ink">
+                Data e ora dell&apos;iscrizione e indirizzo IP.
               </strong>{" "}
               Servono a dimostrare che il consenso è stato prestato davvero, da
               qualcuno, in un certo momento. Non li usiamo per profilarti né per
               riconoscerti quando torni sul sito.
             </li>
             <li>
-              <strong className="font-medium text-zinc-900 dark:text-zinc-100">
-                La lingua preferita del tuo browser.
-              </strong>{" "}
-              Solo per capire in che lingua scriverti.
-            </li>
-            <li>
-              <strong className="font-medium text-zinc-900 dark:text-zinc-100">
+              <strong className="font-bold text-ink">
                 Da dove sei arrivato:
               </strong>{" "}
               il sito che ti ha mandato qui e gli eventuali parametri di
@@ -117,30 +114,30 @@ export default function Privacy() {
         <Section title="Perché, e con quale base giuridica">
           <ul className="list-disc space-y-2 pl-5">
             <li>
-              <strong className="font-medium text-zinc-900 dark:text-zinc-100">
+              <strong className="font-bold text-ink">
                 Avvisarti al lancio</strong>{" "}
               — base giuridica: il tuo{" "}
-              <strong className="font-medium text-zinc-900 dark:text-zinc-100">
+              <strong className="font-bold text-ink">
                 consenso
               </strong>{" "}
               (art. 6.1.a GDPR), che presti iscrivendoti e puoi ritirare quando
               vuoi.
             </li>
             <li>
-              <strong className="font-medium text-zinc-900 dark:text-zinc-100">
+              <strong className="font-bold text-ink">
                 Poter dimostrare quel consenso</strong>{" "}
-              (data, IP, browser) — base giuridica: il{" "}
-              <strong className="font-medium text-zinc-900 dark:text-zinc-100">
+              (data e IP) — base giuridica: il{" "}
+              <strong className="font-bold text-ink">
                 legittimo interesse
               </strong>{" "}
               (art. 6.1.f) a rispondere a chi contesta di essersi iscritto, come
               richiesto dall&apos;art. 7.1.
             </li>
             <li>
-              <strong className="font-medium text-zinc-900 dark:text-zinc-100">
+              <strong className="font-bold text-ink">
                 Capire da quali canali arrivano le iscrizioni</strong>{" "}
               — base giuridica: il{" "}
-              <strong className="font-medium text-zinc-900 dark:text-zinc-100">
+              <strong className="font-bold text-ink">
                 legittimo interesse
               </strong>{" "}
               (art. 6.1.f) a non sprecare tempo e budget su canali che non
@@ -167,62 +164,54 @@ export default function Privacy() {
 
         <Section title="Chi altro li vede">
           <p>
-            Nessuno a cui non serva. I dati passano da alcuni fornitori che
-            trattano i dati per nostro conto come responsabili (art. 28 GDPR):
+            Nessuno a cui non serva. La lista è conservata presso un fornitore
+            che tratta i dati per nostro conto come responsabile (art. 28
+            GDPR):
           </p>
           <ul className="mt-3 list-disc space-y-2 pl-5">
             <li>
-              <strong className="font-medium text-zinc-900 dark:text-zinc-100">
-                Supabase
+              <strong className="font-bold text-ink">
+                Mailchimp
               </strong>{" "}
-              — il database in cui la lista è conservata, ospitato nella regione{" "}
-              {REGIONE_DATABASE}.
-            </li>
-            <li>
-              <strong className="font-medium text-zinc-900 dark:text-zinc-100">
-                n8n
-              </strong>{" "}
-              — l&apos;automazione che prepara e fa partire le email.
-            </li>
-            <li>
-              <strong className="font-medium text-zinc-900 dark:text-zinc-100">
-                {PROVIDER_EMAIL}
-              </strong>{" "}
-              — il servizio che consegna materialmente i messaggi.
+              (The Rocket Science Group LLC, Stati Uniti) — il servizio in cui
+              la lista è conservata e da cui partono le email. Tiene tutti i
+              dati elencati sopra, e gestisce il link per cancellarti che trovi
+              in ogni messaggio.
             </li>
           </ul>
           <p className="mt-3">
             Non vendiamo, non cediamo e non scambiamo la lista con nessuno. Se
-            un fornitore tratta i dati fuori dallo Spazio economico europeo, il
-            trasferimento avviene sulla base delle clausole contrattuali tipo
-            approvate dalla Commissione europea.
+            un fornitore tratta i dati fuori dallo Spazio economico europeo,
+            come Mailchimp negli Stati Uniti, il trasferimento avviene sulla
+            base delle clausole contrattuali tipo approvate dalla Commissione
+            europea.
           </p>
         </Section>
 
         <Section title="I tuoi diritti">
           <p>
             Puoi chiederci in qualsiasi momento di{" "}
-            <strong className="font-medium text-zinc-900 dark:text-zinc-100">
+            <strong className="font-bold text-ink">
               accedere
             </strong>{" "}
             ai tuoi dati, di{" "}
-            <strong className="font-medium text-zinc-900 dark:text-zinc-100">
+            <strong className="font-bold text-ink">
               correggerli
             </strong>
             , di{" "}
-            <strong className="font-medium text-zinc-900 dark:text-zinc-100">
+            <strong className="font-bold text-ink">
               cancellarli
             </strong>
             , di{" "}
-            <strong className="font-medium text-zinc-900 dark:text-zinc-100">
+            <strong className="font-bold text-ink">
               limitarne
             </strong>{" "}
             il trattamento, di{" "}
-            <strong className="font-medium text-zinc-900 dark:text-zinc-100">
+            <strong className="font-bold text-ink">
               riceverli in un formato leggibile
             </strong>{" "}
             e di{" "}
-            <strong className="font-medium text-zinc-900 dark:text-zinc-100">
+            <strong className="font-bold text-ink">
               opporti
             </strong>{" "}
             ai trattamenti fondati sul legittimo interesse. Scrivi a{" "}
@@ -230,7 +219,7 @@ export default function Privacy() {
           </p>
           <p className="mt-3">
             Puoi{" "}
-            <strong className="font-medium text-zinc-900 dark:text-zinc-100">
+            <strong className="font-bold text-ink">
               revocare il consenso
             </strong>{" "}
             quando vuoi, dal link di disiscrizione in fondo a ogni nostra email
@@ -242,7 +231,7 @@ export default function Privacy() {
             diritto di proporre reclamo al{" "}
             <a
               href="https://www.garanteprivacy.it"
-              className="underline underline-offset-2 hover:text-zinc-900 dark:hover:text-zinc-100"
+              className="underline underline-offset-2 hover:text-burgundy"
             >
               Garante per la protezione dei dati personali
             </a>
@@ -258,10 +247,10 @@ export default function Privacy() {
           </p>
         </Section>
 
-        <p className="mt-12 text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="mt-12 text-sm text-ink/60">
           <Link
             href="/wishlist"
-            className="font-medium text-zinc-900 underline underline-offset-2 hover:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:ring-offset-2 dark:text-zinc-100 dark:hover:text-zinc-300 dark:focus:ring-zinc-100 dark:focus:ring-offset-black"
+            className="font-bold text-ink underline underline-offset-2 hover:text-burgundy focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
           >
             Torna alla wishlist
           </Link>
@@ -280,10 +269,10 @@ function Section({
 }) {
   return (
     <section className="mt-10">
-      <h2 className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+      <h2 className="text-lg font-bold text-ink">
         {title}
       </h2>
-      <div className="mt-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
+      <div className="mt-3 text-[15px] leading-relaxed text-ink/80">
         {children}
       </div>
     </section>

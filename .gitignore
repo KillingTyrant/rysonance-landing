@@ -41,3 +41,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# export con dati personali (vedi scripts/import-supabase-subscribers.mjs)
+*.csv

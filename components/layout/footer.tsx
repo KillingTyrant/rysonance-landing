@@ -1,36 +1,48 @@
 import Link from "next/link";
-import { ThemeSwitcher } from "@/components/theme-switcher";
+import { Logo } from "@/components/logo";
 
-/** Lo stesso footer di rysonance-quest, con la privacy e cookie policy iubenda di questo sito. */
+/**
+ * Il footer di tutte le pagine, sul carbone della landing: marchio, wishlist e
+ * la privacy e cookie policy iubenda di questo sito.
+ *
+ * Le classi `iubenda-*` sui due link sono quelle dell'embed: lo script
+ * iubenda (in layout.tsx) le intercetta e apre la policy in sovrimpressione.
+ */
 export function Footer() {
   return (
-    <footer className="w-full flex flex-wrap items-center justify-center border-t border-border mx-auto px-4 text-center text-xs font-sans bg-card/60 backdrop-blur-sm gap-4">
-      <p>Powered by Rysonance all rights reserved. 2026</p>
-      <Link
-        href="/wishlist"
-        className="font-medium underline underline-offset-2 hover:text-foreground/70"
-      >
-        Wishlist
-      </Link>
-      {/* suppressHydrationWarning: il widget iubenda in <head> modifica questi link
-          (es. data-cmp-ab) prima dell'idratazione. */}
-      <a
-        href="https://www.iubenda.com/privacy-policy/23677761"
-        className="iubenda-white iubenda-noiframe iubenda-embed hover:underline"
-        title="Privacy Policy"
-        suppressHydrationWarning
-      >
-        Privacy Policy
-      </a>
-      <a
-        href="https://www.iubenda.com/privacy-policy/23677761/cookie-policy"
-        className="iubenda-white iubenda-noiframe iubenda-embed hover:underline"
-        title="Cookie Policy"
-        suppressHydrationWarning
-      >
-        Cookie Policy
-      </a>
-      <ThemeSwitcher />
+    <footer className="border-t border-white/10 bg-coal font-sans text-white/60">
+      <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-5 py-8 text-xs sm:flex-row sm:justify-between lg:px-10">
+        <Link href="/" aria-label="Rysonance, torna alla home">
+          <Logo variant="full" animated={false} className="h-5 w-auto text-white" />
+        </Link>
+        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+          <p>© 2026 Rysonance. Tutti i diritti riservati.</p>
+          <Link
+            href="/wishlist"
+            className="underline underline-offset-2 hover:text-white"
+          >
+            Wishlist
+          </Link>
+          {/* suppressHydrationWarning: il widget iubenda in <head> modifica questi link
+              (es. data-cmp-ab) prima dell'idratazione. */}
+          <a
+            href="https://www.iubenda.com/privacy-policy/23677761"
+            className="iubenda-white iubenda-noiframe iubenda-embed hover:underline"
+            title="Privacy Policy"
+            suppressHydrationWarning
+          >
+            Privacy Policy
+          </a>
+          <a
+            href="https://www.iubenda.com/privacy-policy/23677761/cookie-policy"
+            className="iubenda-white iubenda-noiframe iubenda-embed hover:underline"
+            title="Cookie Policy"
+            suppressHydrationWarning
+          >
+            Cookie Policy
+          </a>
+        </div>
+      </div>
     </footer>
   );
 }

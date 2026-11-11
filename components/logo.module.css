@@ -132,15 +132,27 @@
   }
 }
 
-.letters path:nth-child(1) { animation-delay: 1.05s; }
-.letters path:nth-child(2) { animation-delay: 1.115s; }
-.letters path:nth-child(3) { animation-delay: 1.18s; }
-.letters path:nth-child(4) { animation-delay: 1.245s; }
-.letters path:nth-child(5) { animation-delay: 1.31s; }
-.letters path:nth-child(6) { animation-delay: 1.375s; }
-.letters path:nth-child(7) { animation-delay: 1.44s; }
-.letters path:nth-child(8) { animation-delay: 1.505s; }
-.letters path:nth-child(9) { animation-delay: 1.57s; }
+/*
+ * Lo stagger parte quando l'onda lascia il simbolo. Senza simbolo (variante
+ * `wordmark`) non c'è niente da aspettare, e il lettering entra subito.
+ */
+.logo {
+  --letters-start: 1.05s;
+}
+
+.wordmark {
+  --letters-start: 0.15s;
+}
+
+.letters path:nth-child(1) { animation-delay: var(--letters-start); }
+.letters path:nth-child(2) { animation-delay: calc(var(--letters-start) + 0.065s); }
+.letters path:nth-child(3) { animation-delay: calc(var(--letters-start) + 0.13s); }
+.letters path:nth-child(4) { animation-delay: calc(var(--letters-start) + 0.195s); }
+.letters path:nth-child(5) { animation-delay: calc(var(--letters-start) + 0.26s); }
+.letters path:nth-child(6) { animation-delay: calc(var(--letters-start) + 0.325s); }
+.letters path:nth-child(7) { animation-delay: calc(var(--letters-start) + 0.39s); }
+.letters path:nth-child(8) { animation-delay: calc(var(--letters-start) + 0.455s); }
+.letters path:nth-child(9) { animation-delay: calc(var(--letters-start) + 0.52s); }
 
 /* ----------------------------------------------------------------------- */
 

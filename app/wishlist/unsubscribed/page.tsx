@@ -7,9 +7,10 @@ import { first } from "../params";
 /**
  * Pagina di atterraggio dopo la disiscrizione: qui ci arriva chi ha appena
  * cliccato il link di cancellazione, mandato dal redirect di chi gestisce
- * davvero la rimozione (oggi n8n, vedi [emails/README.md](../../../emails/README.md)).
- * La pagina non cancella niente — è solo la conferma — quindi va raggiunta
- * *dopo* che la rimozione è andata a buon fine.
+ * davvero la rimozione — Mailchimp, con la «Unsubscribe success page»
+ * dell'audience (Audience → Signup forms → Form builder) impostata su
+ * `/wishlist/unsubscribed`. La pagina non cancella niente — è solo la
+ * conferma — quindi va raggiunta *dopo* che la rimozione è andata a buon fine.
  *
  * L'indirizzo, se c'è, si passa in `?email=`: serve solo a far vedere quale
  * casella è stata tolta, quando ne hai più di una.
@@ -34,58 +35,54 @@ export default async function Unsubscribed({
   const confirmed = isValidEmail(email) ? email : "";
 
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 max-w-3xl w-full flex-col items-center justify-center align-middle p-16 bg-white dark:bg-black sm:items-start">
-        <Logo iconOnly={true} />
+    <main className="flex flex-1 flex-col bg-burgundy font-sans text-white">
+      <div className="mx-auto flex w-full max-w-md flex-1 flex-col px-5 pt-8 pb-10">
+        <Link href="/" aria-label="Torna alla home di Rysonance" className="mx-auto">
+          <Logo variant="wordmark" className="h-auto w-44" />
+        </Link>
 
-        <div className="mt-10 w-full">
-          <div className="flex items-start gap-3">
-            <svg
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-              className="mt-0.5 size-5 shrink-0 text-zinc-400 dark:text-zinc-500"
+        <div className="my-auto py-12 text-center">
+          <svg
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            aria-hidden="true"
+            className="mx-auto size-8 text-gold"
+          >
+            <path
+              fillRule="evenodd"
+              d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM6.75 9.25a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5Z"
+              clipRule="evenodd"
+            />
+          </svg>
+          <h1 className="mt-5 text-[31px] leading-[0.97] font-bold">
+            Iscrizione cancellata
+          </h1>
+          <p className="mt-4 text-[15px] leading-snug text-white/80">
+            {confirmed ? (
+              <>
+                Abbiamo tolto{" "}
+                <span className="font-bold text-white">{confirmed}</span>{" "}
+                dalla wishlist di Rysonance. Non ti scriveremo più.
+              </>
+            ) : (
+              <>
+                Abbiamo tolto il tuo indirizzo dalla wishlist di Rysonance.
+                Non ti scriveremo più.
+              </>
+            )}
+          </p>
+          <p className="mt-4 text-sm text-white/70">
+            Se è stato un errore, o se cambi idea,{" "}
+            <Link
+              href="/wishlist"
+              className="font-bold text-white underline underline-offset-2 hover:text-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM6.75 9.25a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5Z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <div>
-              <h1 className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                Iscrizione cancellata
-              </h1>
-              <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                {confirmed ? (
-                  <>
-                    Abbiamo tolto{" "}
-                    <span className="font-medium text-zinc-900 dark:text-zinc-100">
-                      {confirmed}
-                    </span>{" "}
-                    dalla wishlist di Rysonance. Non ti scriveremo più.
-                  </>
-                ) : (
-                  <>
-                    Abbiamo tolto il tuo indirizzo dalla wishlist di Rysonance.
-                    Non ti scriveremo più.
-                  </>
-                )}
-              </p>
-              <p className="mt-4 text-sm text-zinc-500 dark:text-zinc-400">
-                Se è stato un errore, o se cambi idea,{" "}
-                <Link
-                  href="/wishlist"
-                  className="font-medium text-zinc-900 underline underline-offset-2 hover:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:ring-offset-2 dark:text-zinc-100 dark:hover:text-zinc-300 dark:focus:ring-zinc-100 dark:focus:ring-offset-black"
-                >
-                  puoi rimetterti in lista
-                </Link>{" "}
-                quando vuoi.
-              </p>
-            </div>
-          </div>
+              puoi rimetterti in lista
+            </Link>{" "}
+            quando vuoi.
+          </p>
         </div>
-      </main>
-    </div>
+      </div>
+    </main>
   );
 }

@@ -3,9 +3,9 @@ import styles from "./logo.module.css";
 /**
  * Logo Rysonance: simbolo + lettering.
  *
- * SVG inline e non `next/image`: l'originale ha il colore fisso (#010101) e su
- * tema scuro sparirebbe contro `--background`. Inline diventa `currentColor`,
- * quindi eredita il colore del testo e segue i due temi da solo. È anche il
+ * SVG inline e non `next/image`: l'originale ha il colore fisso (#010101) e
+ * sui fondi scuri delle sezioni sparirebbe. Inline diventa `currentColor`,
+ * quindi eredita il colore del testo della sezione in cui sta. È anche il
  * motivo per cui non passa dall'ottimizzatore: `dangerouslyAllowSVG` è false di
  * default — un default giusto — e un `<img src="logo.svg">` non erediterebbe
  * comunque il colore.
@@ -30,16 +30,51 @@ import styles from "./logo.module.css";
 const MARK =
   "M4.06,1.11C.16,3.38-1.16,8.39,1.11,12.28c2.27,3.89,7.28,5.22,11.17,2.95,3.89-2.27,5.22-7.28,2.95-11.17C12.96.16,7.95-1.16,4.06,1.11ZM14.68,6.17c-1.16-.84-2.79-2.27-3.83-4.21-.09-.19-.35-.89.95-.43,1.7.93,2.95,2.47,3.55,4.27.17.76-.27.63-.67.37ZM11.94,13.08c-.22-1.36-.3-3.27.36-5.29.11-.32.66-1.59,1.91-.7.05.03.07.05.07.05.02.01.03.02.05.03.24.19,1.37,1.2.8,3.29,0,.02-1.81,5.04-3.05,3.05-.1-.21-.13-.42-.14-.42h0ZM9.77,8.38c.33.6,2.17,4.26-.29,5.81-.3.18-.85.45-1.55.43-.45-.05-1.12-.2-1.74-.68-.01-.01-.03-.02-.05-.04-.82-.65-1.54-1.87-1.54-4.15.03-.56.12-1.17.29-1.8,1.44-4.42,3.5-2.04,4.87.43h0ZM8.46,3.93c.19-.72.92-1.14,1.64-.96.72.19,1.14.92.96,1.64-.19.72-.92,1.14-1.64.96-.72-.19-1.14-.92-.96-1.64ZM3.74,2.05c.68-.49,1.45-.87,2.26-1.12.29-.07,1.12-.16.82,1.26-.1.29-.23.61-.36.95,0,0-2.89,6.04-4.58,3.74C.29,4.73,3.34,2.35,3.74,2.05Z";
 
-export function Logo({ className, iconOnly = true, animated = true }: { className?: string, iconOnly?: boolean, animated?: boolean }) {
+/**
+ * - `mark`: solo il simbolo;
+ * - `full`: simbolo + lettering;
+ * - `wordmark`: solo il lettering, come nell'intestazione della landing.
+ */
+type Variant = "mark" | "full" | "wordmark";
+
+/*
+ * Riquadri stretti attorno a ciò che si disegna. Quello del lettering viene da
+ * `getBBox()` sui nove path: col viewBox intero resterebbe a sinistra lo
+ * spazio vuoto del simbolo.
+ */
+const VIEWBOX: Record<Variant, string> = {
+  mark: "0 0 16.34 16.34",
+  full: "0 0 85.5 16.34",
+  wordmark: "19.25 3.11 66.25 11.86",
+};
+
+export function Logo({
+  className,
+  variant = "mark",
+  animated = true,
+}: {
+  className?: string;
+  variant?: Variant;
+  animated?: boolean;
+}) {
+  const showMark = variant !== "wordmark";
+  const showLetters = variant !== "mark";
+
   return (
     <svg
-      viewBox={`0 0 ${iconOnly ? 16.34 : 85.5} 16.34`}
+      viewBox={VIEWBOX[variant]}
       fill="currentColor"
       role="img"
       aria-label="Rysonance"
-      className={`${styles.logo}${className ? ` ${className}` : ""}`}
+      className={[
+        styles.logo,
+        variant === "wordmark" && styles.wordmark,
+        className,
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
-      {animated && (
+      {animated && showMark && (
         <>
           {/* Sotto al simbolo: le onde escono dal bordo del disco (r 8.17). */}
           <g className={styles.rings}>
@@ -49,8 +84,10 @@ export function Logo({ className, iconOnly = true, animated = true }: { classNam
           <path className={styles.trace} d={MARK} pathLength="1" />
         </>
       )}
-      <path className={animated ? styles.mark : undefined} d={MARK} />
-      {!iconOnly && (
+      {showMark && (
+        <path className={animated ? styles.mark : undefined} d={MARK} />
+      )}
+      {showLetters && (
         <g className={animated ? styles.letters : undefined}>
           <path d="M27.37,14.33c.23.17.51.26.86.26v.16h-.4c-.49,0-.88-.02-1.19-.06-.31-.04-.59-.13-.83-.29-.25-.16-.44-.4-.57-.74-.15-.39-.25-.82-.28-1.28-.04-.46-.06-1.05-.06-1.77,0-.82-.03-1.47-.09-1.94-.06-.47-.22-.87-.49-1.19-.27-.32-.69-.48-1.26-.48h-.66v6.33c0,.23.05.42.15.57.1.15.24.27.42.36s.42.16.7.22c.12.01.24.03.36.05v.16h-4.78v-.16l.31-.05c.29-.04.53-.11.73-.2.19-.09.34-.22.44-.37.1-.16.15-.35.15-.58V4.73c0-.23-.05-.42-.15-.58-.1-.16-.24-.28-.44-.37-.19-.09-.44-.16-.73-.2l-.31-.05v-.16h4.97c.57,0,1.06.07,1.45.22.39.15.69.36.89.63s.3.6.3.96c0,.27-.08.52-.25.74-.17.22-.41.41-.74.57-.32.16-.72.27-1.18.35.55.04.95.23,1.21.55.25.32.41.72.47,1.17.06.46.09,1.07.09,1.84,0,.67.02,1.22.05,1.65.03.43.12.84.26,1.21.19.54.4.9.63,1.07ZM24.45,6.4c.23-.14.4-.31.51-.53.11-.22.17-.45.17-.7s-.06-.48-.17-.7c-.11-.22-.28-.39-.51-.52-.23-.13-.5-.19-.83-.19h-1.25l.02,2.83h1.23c.32,0,.6-.07.83-.2Z" />
           <path d="M28.57,14.49c.29-.04.53-.11.73-.2.19-.09.34-.22.44-.37.1-.16.15-.35.15-.58v-3.47l-2.17-5.26c-.1-.19-.22-.36-.38-.5-.16-.14-.33-.25-.53-.34s-.4-.15-.63-.19c-.09-.02-.18-.04-.28-.05v-.16h4.62v.16c-.33.03-.6.1-.79.19-.19.1-.31.23-.36.39-.05.16-.02.36.07.58l1.85,4.49,1.96-4.52c.1-.22.12-.4.08-.55-.04-.15-.16-.28-.35-.38-.19-.1-.45-.17-.79-.2v-.16h3.37v.16l-.19.03c-.24.05-.46.13-.68.22-.22.09-.41.21-.58.36-.17.15-.3.32-.39.51l-2.3,5.25v3.45c0,.23.05.42.15.57.1.15.24.27.42.36s.42.16.7.22c.12.01.24.03.36.05v.16h-4.78v-.16l.31-.05Z" />
