@@ -1,19 +1,14 @@
 import Image from "next/image";
 import voidMonster from "@/assets/landing/void-monster.webp";
-import { ChoiceCards } from "@/components/landing/choice-cards";
 import { DisplayWord } from "@/components/landing/display-word";
+import { ExploreSection } from "@/components/landing/explore-section";
 import { HeroSlider } from "@/components/landing/hero-slider";
+import { WRAP } from "@/components/landing/wrap";
 import { Logo } from "@/components/logo";
 import { WishlistForm } from "@/components/wishlist-form";
 import { readAttribution } from "./wishlist/attribution";
 import type { LANDING_FORMS } from "./wishlist/form";
 import { readOutcome } from "./wishlist/outcome";
-
-/**
- * La colonna dei layout: 960px di contenuto a 1440 (60rem, vedi la scala in
- * globals.css), con 20px di margine quando lo schermo è più stretto.
- */
-const WRAP = "mx-auto w-full max-w-[62.5rem] px-5";
 
 /**
  * La landing, nell'ordine dei layout: intestazione bordeaux con l'illustrazione,
@@ -84,20 +79,12 @@ export default async function Home({ searchParams }: PageProps<"/">) {
         </div>
       </section>
 
-      {/* ── Esplora la nuova generazione ─────────────────────────────── */}
-      <section className="bg-ink text-white">
-        <div className={`${WRAP} pt-14 pb-16 lg:py-36`}>
-          <h2 className="max-w-[13em] text-[31px] leading-[0.97] font-bold lg:text-[1.9375rem]">
-            Esplora la nuova generazione del gioco di ruolo
-          </h2>
-          <div className="mt-8 lg:mt-20">
-            <ChoiceCards />
-          </div>
-        </div>
-      </section>
+      {/* ── Esplora la nuova generazione (sezione bloccata allo scroll) ── */}
+      <ExploreSection />
 
       {/* ── Scatena gli Eco · COMBATTI ───────────────────────────────── */}
-      <section className="bg-paper text-ink">
+      {/* `id`: ci porta «Scopri di più» della sezione sopra. */}
+      <section id="eco" className="bg-paper text-ink">
         {/*
           * Il mostro pende dal bordo della sezione: l'immagine è tagliata in
           * alto, e il riquadro ne mostra solo la parte bassa. Su mobile va da

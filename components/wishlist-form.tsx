@@ -9,6 +9,7 @@ import {
 } from "@/app/wishlist/form";
 import type { Outcome } from "@/app/wishlist/outcome";
 import { PRIVACY_POLICY_URL } from "./layout/iubenda";
+import ticket from "./ticket.module.css";
 import styles from "./wishlist-form.module.css";
 
 /**
@@ -22,7 +23,7 @@ const TONES = {
   dark: {
     input:
       "border-white/70 bg-white/15 text-white placeholder:text-white/55 focus:border-white focus:ring-white",
-    button: styles.ticketGold,
+    button: ticket.gold,
     check: styles.checkOnDark,
     consent: "text-white/80",
     link: "hover:text-white",
@@ -34,7 +35,7 @@ const TONES = {
   light: {
     input:
       "border-ink/60 bg-white text-ink placeholder:text-ink/60 focus:border-ink focus:ring-ink",
-    button: styles.ticketInk,
+    button: ticket.ink,
     check: styles.checkOnLight,
     consent: "text-ink/80",
     link: "hover:text-ink",
@@ -123,7 +124,7 @@ export function WishlistForm({
 
       <button
         type="submit"
-        className={`${styles.ticket} ${t.button} mt-5 flex h-11 w-full items-center justify-center px-8 text-[1.0625rem] font-bold lg:mt-6 lg:text-xl`}
+        className={`${ticket.ticket} ${t.button} mt-5 flex h-11 w-full items-center justify-center px-8 text-[1.0625rem] font-bold lg:mt-6 lg:text-xl`}
       >
         Iscriviti alla wishlist
       </button>

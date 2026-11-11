@@ -1,0 +1,70 @@
+/*
+ * Il bottone a biglietto dei layout (la wishlist, «Scopri di più»): un
+ * rettangolo con i quattro angoli scavati. La forma sta su un `::before`
+ * mascherato e non sul bottone: una `mask` ritaglia anche l'`outline`, e il
+ * focus da tastiera sparirebbe.
+ */
+.ticket {
+  --notch: 0.8rem;
+  position: relative;
+  isolation: isolate;
+  background: none;
+  transition: transform 0.15s ease;
+}
+
+.ticket::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--ticket-bg);
+  transition: filter 0.15s ease;
+  /* un cerchio trasparente per angolo; ogni gradiente copre un quarto */
+  --hole: #0000 var(--notch), #000 calc(var(--notch) + 0.5px);
+  mask:
+    radial-gradient(circle at 0 0, var(--hole)) top left / 51% 51% no-repeat,
+    radial-gradient(circle at 100% 0, var(--hole)) top right / 51% 51% no-repeat,
+    radial-gradient(circle at 0 100%, var(--hole)) bottom left / 51% 51% no-repeat,
+    radial-gradient(circle at 100% 100%, var(--hole)) bottom right / 51% 51%
+      no-repeat;
+}
+
+.ticket:hover::before {
+  filter: brightness(1.08);
+}
+
+.ticket:active {
+  transform: translateY(1px);
+}
+
+.ticket:focus-visible {
+  outline: 2px solid var(--ticket-bg);
+  outline-offset: 3px;
+}
+
+/* Su fondo scuro: oro col testo bordeaux, su qualsiasi fondo (anche il carbone). */
+.gold {
+  --ticket-bg: var(--color-gold);
+  color: var(--color-burgundy);
+}
+
+/* Su fondo chiaro: inchiostro, testo bianco. */
+.ink {
+  --ticket-bg: var(--color-ink);
+  color: #fff;
+}
+
+.ink:hover::before {
+  filter: brightness(1.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticket,
+  .ticket::before {
+    transition: none;
+  }
+
+  .ticket:active {
+    transform: none;
+  }
+}
