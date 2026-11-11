@@ -16,7 +16,7 @@ export default async function Wishlist({ searchParams }: PageProps<"/wishlist">)
     <main className="flex flex-1 flex-col bg-burgundy font-sans text-white">
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col px-5 pt-8 pb-10">
         <Link href="/" aria-label="Torna alla home di Rysonance" className="mx-auto">
-          <Logo variant="wordmark" className="h-auto w-44" />
+          <Logo variant="full" className="h-auto w-[14.25rem]" />
         </Link>
 
         <div className="my-auto py-12">

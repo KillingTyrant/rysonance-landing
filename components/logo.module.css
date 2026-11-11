@@ -6,6 +6,11 @@
  * mentre il contorno svanisce, un'onda di risonanza parte dal bordo del disco e
  * il lettering entra in stagger da sinistra, come se fosse l'onda a scoprirlo.
  *
+ * Tutto si ferma entro 3.4s e non si ripete. Un'animazione che va avanti da
+ * sola per più di 5s, accanto a testo da leggere, vorrebbe un pulsante per
+ * fermarla (WCAG 2.2.2), e in loop terrebbe la pagina a ridisegnare il logo
+ * per sempre, consumando batteria sui telefoni.
+ *
  * Ogni regola parte dallo stato FINALE e usa `backwards`/`forwards` per lo
  * stato iniziale: così con `prefers-reduced-motion` basta spegnere le
  * animazioni e il logo resta visibile e corretto, senza duplicare gli stili.
@@ -78,8 +83,9 @@
   transform: scale(1.05);
 }
 
-/* --- onde di risonanza ------------------------------------------------- */
+/* --- onda di risonanza ------------------------------------------------- */
 
+/* Una sola onda, a fine ingresso (1.35s → 3.35s); poi il logo resta fermo. */
 .rings circle {
   fill: none;
   stroke: currentColor;
@@ -89,12 +95,7 @@
   transform-box: fill-box;
   transform-origin: center;
   opacity: 0;
-  animation: ripple 3.6s cubic-bezier(0.2, 0.6, 0.3, 1) 1.35s infinite;
-}
-
-/* mezzo ciclo di sfasamento: un'onda ogni 1.8s */
-.rings circle:nth-child(2) {
-  animation-delay: 3.15s;
+  animation: ripple 2s cubic-bezier(0.2, 0.6, 0.3, 1) 1.35s;
 }
 
 @keyframes ripple {
@@ -102,10 +103,9 @@
     transform: scale(1);
     opacity: 0;
   }
-  8% {
+  15% {
     opacity: 0.4;
   }
-  55%,
   100% {
     transform: scale(1.9);
     opacity: 0;

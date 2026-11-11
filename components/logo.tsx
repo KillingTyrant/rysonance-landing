@@ -33,7 +33,7 @@ const MARK =
 /**
  * - `mark`: solo il simbolo;
  * - `full`: simbolo + lettering;
- * - `wordmark`: solo il lettering, come nell'intestazione della landing.
+ * - `wordmark`: solo il lettering.
  */
 type Variant = "mark" | "full" | "wordmark";
 
@@ -76,9 +76,8 @@ export function Logo({
     >
       {animated && showMark && (
         <>
-          {/* Sotto al simbolo: le onde escono dal bordo del disco (r 8.17). */}
+          {/* Sotto al simbolo: l'onda esce dal bordo del disco (r 8.17). */}
           <g className={styles.rings}>
-            <circle cx="8.17" cy="8.17" r="8.17" />
             <circle cx="8.17" cy="8.17" r="8.17" />
           </g>
           <path className={styles.trace} d={MARK} pathLength="1" />

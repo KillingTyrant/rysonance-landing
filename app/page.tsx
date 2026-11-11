@@ -51,9 +51,15 @@ export default async function Home({ searchParams }: PageProps<"/">) {
         <div
           className={`${WRAP} grid min-h-svh grid-rows-[auto_auto_1fr_auto] pt-8 pb-10 lg:grid-cols-2 lg:grid-rows-[auto_1.6fr_auto_auto_1fr] lg:gap-x-12 lg:pt-16`}
         >
+          {/*
+            * Simbolo + lettering. Le larghezze sono quelle del solo lettering
+            * di prima (w-44, lg:w-56) per 85.5/66.25, il rapporto fra i due
+            * viewBox: le lettere restano della stessa misura e il simbolo si
+            * aggiunge a sinistra.
+            */}
           <Logo
-            variant="wordmark"
-            className="mx-auto h-auto w-44 lg:mx-0 lg:w-56"
+            variant="full"
+            className="mx-auto h-auto w-[14.25rem] lg:mx-0 lg:w-[18rem]"
           />
 
           <div className="mt-12 text-center lg:col-start-1 lg:row-start-3 lg:mt-0 lg:max-w-[22rem] lg:text-left">
