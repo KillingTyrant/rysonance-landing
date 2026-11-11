@@ -30,6 +30,25 @@ html {
 }
 
 /*
+ * La barra di scorrimento della pagina: senza indicazioni il browser la
+ * prende dal tema del sistema, e su un sistema chiaro diventa una striscia
+ * grigio chiaro accanto ai fondi scuri. Due livelli:
+ * - `color-scheme: dark` dice che la pagina è scura, e così la barra nativa
+ *   diventa scura ovunque, anche dove `scrollbar-color` non arriva (su Safari
+ *   per macOS la sola `scrollbar-color` non cambiava la barra della pagina);
+ * - `scrollbar-color` fissa i colori esatti dove è supportato (Chrome, Edge,
+ *   Firefox): cursore bianco tenue su fondo ink, non oro, che resta per la
+ *   scelta selezionata e la CTA.
+ * `color-scheme` si eredita: i controlli dei form hanno colori espliciti, e
+ * l'unico che sta su fondo chiaro (il campo del form `light`) torna chiaro da
+ * sé, per non avere l'autocompilazione scura su un campo bianco.
+ */
+html {
+  color-scheme: dark;
+  scrollbar-color: rgb(255 255 255 / 0.3) var(--color-ink);
+}
+
+/*
  * Tailwind 4 riporta i bottoni al cursore `default` del browser: qui torna la
  * manina su tutto ciò che si può premere (il bottone della wishlist, i
  * controlli dello slider).

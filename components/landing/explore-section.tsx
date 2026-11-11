@@ -2,12 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import ticket from "@/components/ticket.module.css";
-import { WRAP } from "./wrap";
+import { NARROW, WRAP } from "./wrap";
 
 /**
  * Le quattro voci della sezione. Ogni voce ha la sua carta a destra: per ora
- * una carta disegnata (numero e titolo sul fondo sfumato), al posto delle
- * immagini che arriveranno. Le carte sono `aria-hidden` perché ripetono i
+ * una carta disegnata (il titolo sul fondo sfumato), al posto delle immagini
+ * che arriveranno. Le carte sono `aria-hidden` perché ripetono i
  * titoli della lista; con le immagini vere servirà un `alt`.
  */
 const ITEMS = [
@@ -102,7 +102,7 @@ export function ExploreSection() {
           * righe elastiche; la carta a destra occupa tutte le righe.
           */}
         <div
-          className={`${WRAP} grid gap-y-6 lg:grid-cols-[1fr_auto] lg:grid-rows-[1fr_auto_auto_auto_1fr] lg:gap-x-12 lg:gap-y-0`}
+          className={`${WRAP} ${NARROW} grid gap-y-6 lg:grid-cols-[1fr_auto] lg:grid-rows-[1fr_auto_auto_auto_1fr] lg:gap-x-12 lg:gap-y-0`}
         >
           <h2
             id="esplora-titolo"
@@ -120,9 +120,6 @@ export function ExploreSection() {
                   i === active ? "opacity-100" : "opacity-0"
                 }`}
               >
-                <span className="absolute inset-0 grid place-items-center font-display text-[7rem] leading-none text-gold lg:text-[12rem]">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
                 <span className="absolute inset-x-5 bottom-5 text-base leading-tight font-bold lg:inset-x-6 lg:bottom-6 lg:text-xl">
                   {item.title}
                 </span>

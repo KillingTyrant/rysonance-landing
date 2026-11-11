@@ -34,7 +34,7 @@ const TONES = {
   },
   light: {
     input:
-      "border-ink/60 bg-white text-ink placeholder:text-ink/60 focus:border-ink focus:ring-ink",
+      "border-ink/60 bg-white text-ink [color-scheme:light] placeholder:text-ink/60 focus:border-ink focus:ring-ink",
     button: ticket.ink,
     check: styles.checkOnLight,
     consent: "text-ink/80",

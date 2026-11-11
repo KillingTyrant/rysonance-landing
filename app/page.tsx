@@ -3,7 +3,7 @@ import voidMonster from "@/assets/landing/void-monster.webp";
 import { DisplayWord } from "@/components/landing/display-word";
 import { ExploreSection } from "@/components/landing/explore-section";
 import { HeroSlider } from "@/components/landing/hero-slider";
-import { WRAP } from "@/components/landing/wrap";
+import { NARROW, WRAP } from "@/components/landing/wrap";
 import { Logo } from "@/components/logo";
 import { WishlistForm } from "@/components/wishlist-form";
 import { readAttribution } from "./wishlist/attribution";
@@ -121,7 +121,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
       {/* ── Iscrizione · IMMAGINA ────────────────────────────────────── */}
       <section className="bg-coal text-white">
         <div
-          className={`${WRAP} grid gap-10 pt-16 lg:grid-cols-[1fr_22rem] lg:items-start lg:gap-12 lg:pt-60`}
+          className={`${WRAP} ${NARROW} grid gap-10 pt-16 lg:grid-cols-[1fr_22rem] lg:items-start lg:gap-12 lg:pt-60`}
         >
           <h2 className="max-w-[13em] text-[31px] leading-[0.97] font-bold lg:text-[2.625rem] lg:leading-[0.95]">
             Iscriviti alla wishlist e resta informato sugli sviluppi di
