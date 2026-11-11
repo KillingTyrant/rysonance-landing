@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/logo";
+import { COOKIE_POLICY_URL, PRIVACY_POLICY_URL } from "./iubenda";
 
 /**
  * Il footer di tutte le pagine, sul carbone della landing: marchio, wishlist e
@@ -26,7 +27,7 @@ export function Footer() {
           {/* suppressHydrationWarning: il widget iubenda in <head> modifica questi link
               (es. data-cmp-ab) prima dell'idratazione. */}
           <a
-            href="https://www.iubenda.com/privacy-policy/23677761"
+            href={PRIVACY_POLICY_URL}
             className="iubenda-white iubenda-noiframe iubenda-embed hover:underline"
             title="Privacy Policy"
             suppressHydrationWarning
@@ -34,7 +35,7 @@ export function Footer() {
             Privacy Policy
           </a>
           <a
-            href="https://www.iubenda.com/privacy-policy/23677761/cookie-policy"
+            href={COOKIE_POLICY_URL}
             className="iubenda-white iubenda-noiframe iubenda-embed hover:underline"
             title="Cookie Policy"
             suppressHydrationWarning

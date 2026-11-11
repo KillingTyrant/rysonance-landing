@@ -70,12 +70,17 @@ export default async function Home({ searchParams }: PageProps<"/">) {
             * Su desktop occupa l'angolo in basso a destra della sezione, fino
             * al bordo della finestra; il lato sinistro, che nell'immagine è un
             * taglio netto, sfuma nel bordeaux.
+            *
+            * suppressHydrationWarning (anche sul mostro): il blocco automatico
+            * di iubenda aggiunge `data-cmp-info` alle <img> prima
+            * dell'idratazione.
             */}
           <div className="relative -mx-5 my-4 min-h-56 lg:absolute lg:inset-y-0 lg:right-0 lg:m-0 lg:w-3/5 lg:min-h-0">
             <Image
               src={squarcio}
               alt=""
               preload
+              suppressHydrationWarning
               sizes="(min-width: 1024px) 45vw, 100vw"
               className="pointer-events-none absolute right-0 bottom-0 h-auto w-full max-w-none [mask-image:linear-gradient(to_bottom,#000_75%,transparent)] lg:h-[125%] lg:w-auto lg:[mask-image:linear-gradient(to_right,transparent,#000_45%)]"
             />
@@ -117,6 +122,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
             src={voidMonster}
             alt="Il Void Monster, una creatura scura coperta di occhi e con una fila di denti affilati."
             fill
+            suppressHydrationWarning
             sizes="100vw"
             className="object-cover object-bottom"
           />

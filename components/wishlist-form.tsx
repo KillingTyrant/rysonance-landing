@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { joinWishlist } from "@/app/wishlist/actions";
 import { ATTRIBUTION_FIELDS, type Attribution } from "@/app/wishlist/attribution";
 import {
@@ -9,6 +8,7 @@ import {
   type FormOrigin,
 } from "@/app/wishlist/form";
 import type { Outcome } from "@/app/wishlist/outcome";
+import { PRIVACY_POLICY_URL } from "./layout/iubenda";
 import styles from "./wishlist-form.module.css";
 
 /**
@@ -158,12 +158,25 @@ export function WishlistForm({
             Iscrivendoti alla wishlist accetti di ricevere aggiornamenti sul
             mondo di gioco e i suoi sviluppi.
           </label>{" "}
-          <Link
-            href="/privacy"
-            className={`underline underline-offset-2 ${t.link}`}
+          {/*
+            * La policy iubenda, la stessa del footer. Le classi `iubenda-*`
+            * fanno aprire allo script iubenda (in layout.tsx) la policy in
+            * sovrimpressione, così il form resta com'è; `nostyle` lascia il
+            * link com'è disegnato qui. Senza script si apre in una scheda
+            * nuova, per non perdere l'indirizzo già scritto.
+            * suppressHydrationWarning: lo script marca i link esterni prima
+            * dell'idratazione.
+            */}
+          <a
+            href={PRIVACY_POLICY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Privacy Policy"
+            className={`iubenda-nostyle iubenda-noiframe iubenda-embed underline underline-offset-2 ${t.link}`}
+            suppressHydrationWarning
           >
             Informativa privacy
-          </Link>
+          </a>
         </p>
       </div>
 
