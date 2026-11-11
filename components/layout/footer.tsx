@@ -17,7 +17,7 @@ export function Footer() {
           <Logo variant="full" animated={false} className="h-5 w-auto text-white" />
         </Link>
         <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
-          <p>© 2026 Rysonance. Tutti i diritti riservati.</p>
+          <p>© 2026 Rysonance</p>
           <Link
             href="/wishlist"
             className="underline underline-offset-2 hover:text-white"
