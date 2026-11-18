@@ -1,0 +1,96 @@
+/*
+ * Il bottone a biglietto tondo del design system, dalla forma di Figma
+ * (`Subtract.svg`), nella versione per la UI scura: tutto bianco, scritta
+ * scura. Al passaggio del mouse e al fuoco da tastiera escono dall'interno i
+ * due pallini di `Group 248.svg` (raggio 5), dello stesso colore del bottone;
+ * niente bordo. Al clic bottone e pallini diventano oro, scritta nera.
+ *
+ * I pallini non cambiano mai forma né misura, scivolano soltanto: sono
+ * disegnati sotto il corpo del bottone e da fermi stanno 14 unità più
+ * dentro, coperti.
+ */
+
+.pill {
+  --pill-bg: #fff;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-ink);
+  font-weight: 800;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Le due misure di Figma: «Medium» 40px e «Small» 32px, lo stesso disegno in scala. */
+.m {
+  height: 40px;
+  font-size: 1.0625rem;
+}
+
+.s {
+  height: 32px;
+  font-size: 0.875rem;
+}
+
+.pill:focus-visible {
+  outline: none;
+}
+
+.pill:active {
+  --pill-bg: var(--color-gold);
+  color: #000;
+}
+
+/*
+ * La pressione sposta disegno e testo, non il link: le transizioni del link
+ * (per esempio la salita nella barra) le decide chi lo usa.
+ */
+.pill:active .shape,
+.pill:active .label {
+  transform: translateY(1px);
+}
+
+.shape {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.body,
+.dot {
+  fill: var(--pill-bg);
+  transition: fill 0.15s ease;
+}
+
+.dot {
+  transition:
+    fill 0.15s ease,
+    transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.left {
+  transform: translateX(14px);
+}
+
+.right {
+  transform: translateX(-14px);
+}
+
+.label {
+  position: relative;
+}
+
+.pill:hover .dot,
+.pill:focus-visible .dot,
+.pill:active .dot {
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .body,
+  .dot {
+    transition: none;
+  }
+}

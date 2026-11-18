@@ -18,15 +18,19 @@ const cabinet = localFont({
 });
 
 /**
- * Sprat Condensed Thin: le parole a tutta larghezza (ESPLORA, IMMAGINA).
+ * Sprat Condensed Thin: le parole a tutta larghezza (COMBATTI, IMMAGINA).
  * Statico e non il variabile: SpratVF ha assi fuori standard (`wght` 10–200,
  * `wdth` 100–200), che `font-weight` e `font-stretch` non raggiungono, e
  * servirebbe pilotarli a mano con `font-variation-settings` per un solo stile.
+ *
+ * `preload: false`: le due parole stanno in fondo alla pagina, e non serve
+ * che il font arrivi prima di quello che si legge subito.
  */
 const sprat = localFont({
   src: "../assets/fonts/Sprat-CondensedThin.woff2",
   weight: "100",
   variable: "--font-sprat",
+  preload: false,
 });
 
 // Dominio di produzione, non l'URL del singolo deploy (VERCEL_URL): serve ai link assoluti dei metadata.

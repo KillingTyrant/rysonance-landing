@@ -1,5 +1,5 @@
 /*
- * Il bottone a biglietto dei layout (la wishlist, «Scopri di più»): un
+ * Il bottone a biglietto dei layout (l'iscrizione alla wishlist): un
  * rettangolo con i quattro angoli scavati. La forma sta su un `::before`
  * mascherato e non sul bottone: una `mask` ritaglia anche l'`outline`, e il
  * focus da tastiera sparirebbe.

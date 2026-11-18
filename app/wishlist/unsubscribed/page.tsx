@@ -38,7 +38,7 @@ export default async function Unsubscribed({
     <main className="flex flex-1 flex-col bg-burgundy font-sans text-white">
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col px-5 pt-8 pb-10">
         <Link href="/" aria-label="Torna alla home di Rysonance" className="mx-auto">
-          <Logo variant="full" className="h-auto w-[14.25rem]" />
+          <Logo className="h-auto w-[14.25rem]" />
         </Link>
 
         <div className="my-auto py-12 text-center">
@@ -54,7 +54,7 @@ export default async function Unsubscribed({
               clipRule="evenodd"
             />
           </svg>
-          <h1 className="mt-5 text-[1.9375rem] leading-[0.97] font-bold">
+          <h1 className="mt-5 text-[1.9375rem] leading-[0.97] font-extrabold">
             Iscrizione cancellata
           </h1>
           <p className="mt-4 text-[0.9375rem] leading-snug text-white/80">
