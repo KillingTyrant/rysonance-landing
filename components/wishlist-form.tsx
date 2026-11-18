@@ -88,7 +88,7 @@ export function WishlistForm({
     <form
       id={anchor}
       action={joinWishlist}
-      className={`w-full scroll-mt-10 ${className}`}
+      className={`w-full scroll-mt-24 ${className}`}
     >
       <input type="hidden" name={ORIGIN_FIELD} value={origin} />
 
@@ -124,7 +124,7 @@ export function WishlistForm({
 
       <button
         type="submit"
-        className={`${ticket.ticket} ${t.button} mt-5 flex h-11 w-full items-center justify-center px-8 text-[1.0625rem] font-bold lg:mt-6 lg:text-xl`}
+        className={`${ticket.ticket} ${t.button} mt-5 flex h-11 w-full items-center justify-center px-8 text-[1.0625rem] font-extrabold lg:mt-6 lg:text-xl`}
       >
         Iscriviti alla wishlist
       </button>
@@ -220,7 +220,7 @@ function Confirmation({
     <div
       id={id}
       role="status"
-      className={`flex w-full scroll-mt-10 items-start gap-3 rounded-[0.625rem] border p-4 text-left ${t.confirm} ${className}`}
+      className={`flex w-full scroll-mt-24 items-start gap-3 rounded-[0.625rem] border p-4 text-left ${t.confirm} ${className}`}
     >
       <svg
         viewBox="0 0 20 20"
@@ -235,7 +235,7 @@ function Confirmation({
         />
       </svg>
       <div>
-        <p className="font-bold">Sei nella wishlist</p>
+        <p className="font-extrabold">Sei nella wishlist</p>
         <p className={`mt-1 text-sm ${t.confirmMuted}`}>
           Ti scriveremo a <span className="font-semibold">{email}</span> non
           appena ci sarà qualcosa da condividere.

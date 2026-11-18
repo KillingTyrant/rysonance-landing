@@ -14,7 +14,7 @@ export function Footer() {
     <footer className="border-t border-white/10 bg-coal font-sans text-white/60">
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-5 py-8 text-xs sm:flex-row sm:justify-between lg:px-10">
         <Link href="/" aria-label="Rysonance, torna alla home">
-          <Logo variant="full" animated={false} className="h-5 w-auto text-white" />
+          <Logo className="h-5 w-auto text-white" />
         </Link>
         <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
           <p>© 2026 Rysonance</p>

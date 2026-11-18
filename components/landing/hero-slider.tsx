@@ -62,8 +62,9 @@ const useHydrated = () =>
  * `hero-slider.module.css`), controlli e swipe.
  *
  * Dal server arriva solo la prima tavola, precaricata: è l'immagine più
- * grande della pagina e non deve aspettare le altre. Le altre cinque si
- * montano dopo l'idratazione, e senza JavaScript resta la prima, ferma.
+ * grande della pagina e non deve aspettare le altre. Dopo l'idratazione si
+ * monta anche la prossima, e così via una alla volta; senza JavaScript resta
+ * la prima, ferma.
  *
  * Accessibilità (pattern carousel di WAI-ARIA): regione con nome, ogni tavola
  * è un gruppo «N di 6», quelle nascoste sono `aria-hidden`; le novità si
@@ -134,9 +135,16 @@ export function HeroSlider() {
         }}
       >
         {SLIDES.map((slide, i) => {
-          if (i > 0 && !hydrated) return null;
           const active = i === index;
           const under = i === previous;
+          /*
+           * Montate solo le tavole che servono: l'attiva, quella sotto
+           * durante la dissolvenza e la prossima, che così si scarica nei 6s
+           * in cui si guarda l'attiva. Montarle tutte insieme voleva dire
+           * scaricare sei illustrazioni all'apertura (quasi 1 MB su mobile).
+           */
+          const upcoming = hydrated && i === (index + 1) % count;
+          if (!active && !under && !upcoming) return null;
           return (
             <div
               key={slide.name}
@@ -166,7 +174,7 @@ export function HeroSlider() {
                 draggable={false}
                 // iubenda aggiunge `data-cmp-info` alle <img> prima dell'idratazione.
                 suppressHydrationWarning
-                sizes="(min-width: 1024px) 50vw, 100vw"
+                sizes="(min-width: 1024px) 42vw, 100vw"
                 /*
                  * Zoomata lenta all'indietro mentre la tavola è attiva. Quella
                  * sotto resta com'è finché la nuova non l'ha coperta; poi,
