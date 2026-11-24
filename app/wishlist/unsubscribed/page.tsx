@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import Link from "next/link";
 import { Logo } from "@/components/logo";
 import { isValidEmail, normalizeEmail } from "../email";
@@ -23,17 +24,41 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function Unsubscribed({
-  searchParams,
-}: PageProps<"/wishlist/unsubscribed">) {
-  const params = await searchParams;
+/**
+ * La frase di conferma. Pagina e frase senza indirizzo sono pronte prima della
+ * visita; l'indirizzo, che sta nella query, arriva subito dopo nella stessa
+ * risposta (Cache Components, vedi `next.config.ts`).
+ */
+function Removed({ email }: { email: string }) {
+  return email ? (
+    <>
+      Abbiamo tolto <span className="font-bold text-white">{email}</span>{" "}
+      dalla wishlist di Rysonance. Non ti scriveremo più.
+    </>
+  ) : (
+    <>
+      Abbiamo tolto il tuo indirizzo dalla wishlist di Rysonance. Non ti
+      scriveremo più.
+    </>
+  );
+}
 
+async function RemovedFromQuery({
+  searchParams,
+}: {
+  searchParams: PageProps<"/wishlist/unsubscribed">["searchParams"];
+}) {
+  const params = await searchParams;
   // Stessa cautela della conferma di iscrizione: l'indirizzo arriva dall'URL,
   // quindi si ri-valida prima di stamparlo. Se non è plausibile si mostra la
   // conferma senza indirizzo, che regge lo stesso.
   const email = normalizeEmail(first(params.email));
-  const confirmed = isValidEmail(email) ? email : "";
+  return <Removed email={isValidEmail(email) ? email : ""} />;
+}
 
+export default function Unsubscribed({
+  searchParams,
+}: PageProps<"/wishlist/unsubscribed">) {
   return (
     <main className="flex flex-1 flex-col bg-burgundy font-sans text-white">
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col px-5 pt-8 pb-10">
@@ -58,18 +83,9 @@ export default async function Unsubscribed({
             Iscrizione cancellata
           </h1>
           <p className="mt-4 text-[0.9375rem] leading-snug text-white/80">
-            {confirmed ? (
-              <>
-                Abbiamo tolto{" "}
-                <span className="font-bold text-white">{confirmed}</span>{" "}
-                dalla wishlist di Rysonance. Non ti scriveremo più.
-              </>
-            ) : (
-              <>
-                Abbiamo tolto il tuo indirizzo dalla wishlist di Rysonance.
-                Non ti scriveremo più.
-              </>
-            )}
+            <Suspense fallback={<Removed email="" />}>
+              <RemovedFromQuery searchParams={searchParams} />
+            </Suspense>
           </p>
           <p className="mt-4 text-sm text-white/70">
             Se è stato un errore, o se cambi idea,{" "}

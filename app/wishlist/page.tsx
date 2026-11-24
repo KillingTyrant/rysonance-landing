@@ -1,16 +1,22 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/logo";
-import { WishlistForm } from "@/components/wishlist-form";
-import { readAttribution } from "./attribution";
-import { readOutcome } from "./outcome";
+import { LiveWishlistForm } from "@/components/live-wishlist-form";
+
+export const metadata: Metadata = {
+  title: "Iscriviti alla wishlist",
+  description:
+    "Iscriviti alla wishlist di Rysonance, il gioco di ruolo da tavolo facile per iniziare: ti invieremo un’email non appena sarà pronto.",
+  alternates: { canonical: "/wishlist" },
+};
 
 /**
  * La pagina della sola iscrizione, per i link che puntano dritti al form.
  * Stesso form e stessa action della landing, con l'aspetto della sua
- * intestazione.
+ * intestazione. Come la landing è pronta prima della visita, col form che
+ * arriva dopo (vedi `LiveWishlistForm`).
  */
-export default async function Wishlist({ searchParams }: PageProps<"/wishlist">) {
-  const params = await searchParams;
+export default function Wishlist({ searchParams }: PageProps<"/wishlist">) {
 
   return (
     <main className="flex flex-1 flex-col bg-burgundy font-sans text-white">
@@ -27,12 +33,7 @@ export default async function Wishlist({ searchParams }: PageProps<"/wishlist">)
             Ti invieremo un’email non appena Rysonance sarà pronto.
           </p>
           <div className="mt-10">
-            <WishlistForm
-              origin="wishlist"
-              tone="dark"
-              outcome={readOutcome(params)}
-              attribution={await readAttribution(params)}
-            />
+            <LiveWishlistForm origin="wishlist" searchParams={searchParams} />
           </div>
         </div>
       </div>

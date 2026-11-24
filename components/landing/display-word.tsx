@@ -42,7 +42,7 @@ export function DisplayWord({
       className={`@container w-full overflow-hidden select-none ${className}`}
     >
       <p
-        className="font-display leading-[0.76] tracking-[-0.06em] whitespace-nowrap"
+        className="font-display leading-[0.76] font-thin tracking-[-0.06em] whitespace-nowrap"
         style={{ fontSize: `calc(100cqw / ${fit})`, marginLeft: bearing }}
       >
         {word}

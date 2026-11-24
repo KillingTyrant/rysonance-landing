@@ -20,36 +20,39 @@ const SLIDES: { name: string; image: StaticImageData; alt: string }[] = [
   {
     name: "Ulu Ari",
     image: uluAri,
-    alt: "Un teschio di bestia cornuto davanti a una falce di luna, fra asce, lance e scudi incisi.",
+    alt: "Un teschio con le corna che rappresenta una delle razze giocabili del gioco: gli Ulu Ari.",
   },
   {
     name: "Elfi",
     image: elfi,
-    alt: "Un teschio con una corona di rami davanti a lame ricurve, fra viticci e luci sospese.",
+    alt: "Un teschio con le corna che rappresenta una delle razze giocabili del gioco: gli Elfi.",
   },
   {
     name: "Gata Ari",
     image: gataAri,
-    alt: "Un teschio felino blu fra lame ricurve, mazze chiodate e drappi rosa.",
+    alt: "Un teschio con le corna che rappresenta una delle razze giocabili del gioco: i Gata Ari.",
   },
   {
     name: "Nani",
     image: nani,
-    alt: "Un teschio con la barba intrecciata e un diadema d'oro, fra asce, martelli e ingranaggi.",
+    alt: "Un teschio con le corna che rappresenta una delle razze giocabili del gioco: i Nani.",
   },
   {
     name: "Orchi",
     image: orchi,
-    alt: "Un teschio verde con le zanne, sporco di sangue, fra asce e clave incrociate.",
+    alt: "Un teschio con le corna che rappresenta una delle razze giocabili del gioco: gli Orchi.",
   },
   {
     name: "Umani",
     image: umani,
-    alt: "Un teschio con una corona d'argento e un drappo rosso, fra spade e stendardi.",
+    alt: "Un teschio con le corna che rappresenta una delle razze giocabili del gioco: gli Umani.",
   },
 ];
 
 const SWIPE_THRESHOLD = 40; // px
+
+/** Da qui in su lo slider ha i controlli e lo swipe (come `lg:`). */
+const DESKTOP = "(width >= 64rem)";
 
 // Vero solo dopo l'idratazione, senza un setState dentro un effetto.
 const noop = () => () => {};
@@ -59,7 +62,12 @@ const useHydrated = () =>
 /**
  * Lo slider dei popoli nell'intestazione: dissolvenza fra le tavole, una
  * leggera zoomata su quella attiva, avanzamento automatico ogni 6s (vedi
- * `hero-slider.module.css`), controlli e swipe.
+ * `hero-slider.module.css`). Su desktop ha controlli e swipe; sul telefono e
+ * sul tablet fa da sfondo all'intestazione e ci sono solo le tavole che
+ * scorrono: i controlli restano nella pagina ma invisibili
+ * (`visibility: hidden`, fuori dal tab e dai lettori di schermo), perché è la
+ * barra di avanzamento a dare il tempo, e un elemento invisibile continua ad
+ * animarsi (con `display: none` lo slider si fermerebbe).
  *
  * Dal server arriva solo la prima tavola, precaricata: è l'immagine più
  * grande della pagina e non deve aspettare le altre. Dopo l'idratazione si
@@ -69,8 +77,9 @@ const useHydrated = () =>
  * Accessibilità (pattern carousel di WAI-ARIA): regione con nome, ogni tavola
  * è un gruppo «N di 6», quelle nascoste sono `aria-hidden`; le novità si
  * annunciano solo a slider fermo, per non interrompere chi legge a ogni
- * cambio. Il pulsante pausa c'è perché il movimento dura più di 5s (WCAG
- * 2.2.2).
+ * cambio. Su desktop il pulsante pausa c'è perché il movimento dura più di
+ * 5s (WCAG 2.2.2); sul telefono e sul tablet, senza controlli per scelta di
+ * design, lo slider si ferma solo col movimento ridotto.
  */
 export function HeroSlider() {
   const hydrated = useHydrated();
@@ -113,16 +122,14 @@ export function HeroSlider() {
       className={`${styles.slider} ${userPaused || !onScreen ? styles.paused : ""} absolute inset-0 flex flex-col`}
     >
       {/*
-        * Su mobile la tavola sfuma in alto e in basso nel bordeaux; su
-        * desktop è un pannello netto, col taglio dritto come nel layout.
-        * `touch-pan-y`: lo scroll verticale resta al browser, gli
+        * Da desktop, `touch-pan-y`: lo scroll verticale resta al browser, gli
         * spostamenti orizzontali arrivano a noi come swipe.
         */}
       <div
         aria-live={playing ? "off" : "polite"}
-        className="relative min-h-0 flex-1 touch-pan-y overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,#000_15%,#000_85%,transparent)] lg:[mask-image:none]"
+        className="relative min-h-0 flex-1 overflow-hidden lg:touch-pan-y"
         onPointerDown={(e) => {
-          swipeStart.current = e.clientX;
+          swipeStart.current = window.matchMedia(DESKTOP).matches ? e.clientX : null;
         }}
         onPointerUp={(e) => {
           if (swipeStart.current === null) return;
@@ -174,7 +181,7 @@ export function HeroSlider() {
                 draggable={false}
                 // iubenda aggiunge `data-cmp-info` alle <img> prima dell'idratazione.
                 suppressHydrationWarning
-                sizes="(min-width: 1024px) 42vw, 100vw"
+                sizes="(min-width: 1024px) 42vw, 130vw"
                 /*
                  * Zoomata lenta all'indietro mentre la tavola è attiva. Quella
                  * sotto resta com'è finché la nuova non l'ha coperta; poi,
@@ -197,8 +204,8 @@ export function HeroSlider() {
         className="pointer-events-none absolute inset-x-0 bottom-0 z-30 hidden h-48 bg-gradient-to-t from-black/60 to-transparent lg:block"
       />
 
-      {/* Controlli: sotto la tavola su mobile, sopra la tavola su desktop. */}
-      <div className="relative z-40 mt-3 flex flex-col items-center gap-2 lg:absolute lg:inset-x-0 lg:bottom-10 lg:mt-0">
+      {/* Controlli: sopra la tavola su desktop, invisibili sotto (vedi sopra). */}
+      <div className="invisible absolute inset-x-0 bottom-10 z-40 flex flex-col items-center gap-2 lg:visible">
         <p
           aria-hidden="true"
           className="text-xs font-bold tracking-[0.25em] text-white uppercase"

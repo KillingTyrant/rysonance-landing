@@ -6,6 +6,7 @@ import { WRAP } from "@/components/landing/wrap";
 import { LETTERS_GAP, Logo } from "@/components/logo";
 import { pillOverhang, TicketPill } from "@/components/ticket-pill";
 import { formAnchor } from "@/app/wishlist/form";
+import { SocialIcons } from "./social-icons";
 
 /** Da quanti px di scroll le lettere si ritirano e resta il simbolo. */
 const COLLAPSE_AT = 120;
@@ -46,7 +47,8 @@ function scrollToForm(event: MouseEvent<HTMLAnchorElement>) {
  * riquadro che le taglia e spariscono dietro il simbolo, che resta; tornando
  * in cima rientrano. Al loro posto, appena spariscono, sale dal fondo della
  * barra, in alto a destra, il bottone «Iscriviti» (ease-in), che porta al
- * form in fondo alla pagina; tornando in cima scende prima lui, poi
+ * form in fondo alla pagina, e appena è arrivato, al centro, le icone di
+ * Instagram, TikTok e Discord; tornando in cima scendono prima loro, poi
  * rientrano le lettere.
  *
  * In cima la barra è trasparente e il logo sta sul bordeaux dell'intestazione
@@ -64,7 +66,7 @@ export function Navbar() {
           : "border-transparent bg-transparent"
       }`}
     >
-      <div className={`${WRAP} flex h-full items-center justify-between`}>
+      <div className={`${WRAP} relative flex h-full items-center justify-between`}>
         <Link
           href="/"
           aria-label="Rysonance, torna all'inizio"
@@ -81,6 +83,13 @@ export function Navbar() {
             />
           </span>
         </Link>
+
+        {/*
+          * Al centro, le icone social (vedi `social-icons.tsx`): arrivano appena
+          * il bottone ha finito di salire. Sul telefono non stanno al centro esatto ma a metà
+          * fra il simbolo e il bottone, dove c'è posto.
+          */}
+        <SocialIcons shown={collapsed} />
 
         {/*
           * In alto a destra, in un riquadro alto quanto la barra che lo taglia
@@ -100,7 +109,7 @@ export function Navbar() {
             onClick={scrollToForm}
             className={`transition-[translate,opacity] motion-reduce:transition-none ${
               collapsed
-                ? "translate-y-0 opacity-100 delay-300 duration-340 ease-in"
+                ? "translate-y-0 opacity-100 delay-300 duration-190 ease-in"
                 : "translate-y-12 opacity-0 duration-200 ease-out"
             }`}
           >

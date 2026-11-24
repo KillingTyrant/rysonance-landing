@@ -1,25 +1,52 @@
 /*
- * Il bottone a biglietto dei layout (l'iscrizione alla wishlist): un
- * rettangolo con i quattro angoli scavati. La forma sta su un `::before`
- * mascherato e non sul bottone: una `mask` ritaglia anche l'`outline`, e il
- * focus da tastiera sparirebbe.
+ * Il bottone a biglietto dei layout, la CTA primaria (l'iscrizione alla
+ * wishlist, le card degli Eco): un rettangolo con i quattro angoli scavati.
+ *
+ * Tre strati, tutti con la stessa forma:
+ * - `::before`, la forma intera: è il colore del bordo (`--edge`);
+ * - `::after`, la stessa forma rientrata di `--line`: il riempimento
+ *   (`--fill`) e i due pallini, nel colore del testo. Quando bordo e
+ *   riempimento hanno lo stesso colore il bordo non si vede;
+ * - il testo.
+ * La forma sta sugli pseudo-elementi e non sul bottone: una `mask` ritaglia
+ * anche l'`outline`, e il focus da tastiera sparirebbe.
+ *
+ * I pallini, come in Figma (`Group 248.svg`), stanno all'interno davanti alle
+ * tacche. Da fermi sono fuori dal bottone e non si vedono; al passaggio del
+ * mouse, al fuoco da tastiera e al clic entrano scorrendo da fuori verso
+ * l'interno (si anima la loro `background-position`).
  */
 .ticket {
   --notch: 0.8rem;
+  --line: 2px;
+  /* I pallini scalano con le tacche: in Figma sono il 70% della tacca. */
+  --dot: calc(var(--notch) * 0.7);
+  /* Dove sta il centro del pallino, dal bordo del bottone. */
+  --dot-x: calc(var(--notch) * 1.05);
+  /* Da fermi: appena fuori dal bordo. */
+  --dot-at: calc(var(--dot) * -1);
+  --edge: var(--ticket-bg);
+  --fill: var(--ticket-bg);
   position: relative;
   isolation: isolate;
   background: none;
-  transition: transform 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    color 0.15s ease;
 }
 
-.ticket::before {
+.ticket::before,
+.ticket::after {
   content: "";
   position: absolute;
-  inset: 0;
   z-index: -1;
-  background: var(--ticket-bg);
-  transition: filter 0.15s ease;
-  /* un cerchio trasparente per angolo; ogni gradiente copre un quarto */
+}
+
+/* Il bordo: un cerchio trasparente per angolo, ogni gradiente copre un quarto. */
+.ticket::before {
+  inset: 0;
+  background: var(--edge);
+  transition: background-color 0.15s ease;
   --hole: #0000 var(--notch), #000 calc(var(--notch) + 0.5px);
   mask:
     radial-gradient(circle at 0 0, var(--hole)) top left / 51% 51% no-repeat,
@@ -29,8 +56,50 @@
       no-repeat;
 }
 
-.ticket:hover::before {
-  filter: brightness(1.08);
+/*
+ * Il riempimento, rientrato di `--line`. Le tacche hanno lo stesso centro di
+ * quelle del bordo (gli angoli esterni, a `--line` fuori da questo riquadro)
+ * e un raggio più grande di `--line`: così il bordo è spesso uguale anche
+ * lungo le curve.
+ */
+.ticket::after {
+  inset: var(--line);
+  --dot-paint: radial-gradient(circle closest-side, currentColor 94%, #0000);
+  background:
+    var(--dot-paint) left var(--dot-at) center / var(--dot) var(--dot) no-repeat,
+    var(--dot-paint) right var(--dot-at) center / var(--dot) var(--dot) no-repeat,
+    var(--fill);
+  transition:
+    background-color 0.15s ease,
+    background-position 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  --out: calc(var(--line) * -1);
+  --far: calc(100% + var(--line));
+  --hole: #0000 calc(var(--notch) + var(--line)),
+    #000 calc(var(--notch) + var(--line) + 0.5px);
+  mask:
+    radial-gradient(circle at var(--out) var(--out), var(--hole)) top left / 51% 51%
+      no-repeat,
+    radial-gradient(circle at var(--far) var(--out), var(--hole)) top right / 51%
+      51% no-repeat,
+    radial-gradient(circle at var(--out) var(--far), var(--hole)) bottom left / 51%
+      51% no-repeat,
+    radial-gradient(circle at var(--far) var(--far), var(--hole)) bottom right /
+      51% 51% no-repeat;
+}
+
+/*
+ * I pallini entrano. Il passaggio del mouse solo dove esiste davvero (non sui
+ * touch, dove resterebbe acceso dopo il tocco); il clic vale ovunque.
+ */
+@media (hover: hover) {
+  .ticket:hover {
+    --dot-at: calc(var(--dot-x) - var(--line) - var(--dot) / 2);
+  }
+}
+
+.ticket:focus-visible,
+.ticket:active {
+  --dot-at: calc(var(--dot-x) - var(--line) - var(--dot) / 2);
 }
 
 .ticket:active {
@@ -42,25 +111,53 @@
   outline-offset: 3px;
 }
 
-/* Su fondo scuro: oro col testo bordeaux, su qualsiasi fondo (anche il carbone). */
+/*
+ * Oro (su fondo scuro), col testo bordeaux. Al passaggio solo i pallini, nel
+ * colore del testo; al clic sfondo nero, bordo, testo e pallini oro.
+ */
 .gold {
   --ticket-bg: var(--color-gold);
   color: var(--color-burgundy);
 }
 
-/* Su fondo chiaro: inchiostro, testo bianco. */
+.gold:active {
+  --fill: #000;
+  color: var(--color-gold);
+}
+
+/*
+ * Inchiostro (su fondo chiaro), testo bianco, come nelle tavole del design
+ * system: al passaggio resta il bordo, il fondo diventa chiaro
+ * (`--ticket-surface`, il bianco delle card) e testo e pallini sono
+ * d'inchiostro; al clic torna pieno, coi pallini bianchi.
+ */
 .ink {
   --ticket-bg: var(--color-ink);
+  --ticket-surface: #fff;
   color: #fff;
 }
 
-.ink:hover::before {
-  filter: brightness(1.6);
+@media (hover: hover) {
+  .ink:hover {
+    --fill: var(--ticket-surface);
+    color: var(--color-ink);
+  }
+}
+
+.ink:focus-visible {
+  --fill: var(--ticket-surface);
+  color: var(--color-ink);
+}
+
+.ink:active {
+  --fill: var(--color-ink);
+  color: #fff;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .ticket,
-  .ticket::before {
+  .ticket::before,
+  .ticket::after {
     transition: none;
   }
 

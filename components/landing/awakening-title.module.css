@@ -1,0 +1,80 @@
+/*
+ * Le righe sono decise (`BREAKS` in `awakening-title.tsx`), e il testo è
+ * grande quanto basta perché la riga più lunga riempia la larghezza
+ * disponibile: la sezione meno 20px per lato, 80rem al massimo (un po' più
+ * larga della colonna, sta sopra l'illustrazione), col 5% d'aria.
+ * --fit è la larghezza della riga più lunga in em, misurata con
+ * `measureText()` su canvas (Sprat Condensed Light, tracking −0.03em):
+ * - da tablet, due righe: «IL MONDO HA BISOGNO», 9,94em;
+ * - sul telefono (sotto i 48rem, come `breakpoints.ts`), tre righe:
+ *   «TUO RISVEGLIO», 6,75em.
+ * Se cambiano frase, righe, font o tracking, --fit va rifatto, altrimenti la
+ * riga sborda o resta corta.
+ *
+ * Bianco pieno, con un'ombra morbida nel blu notte di «Esplora» (#020817) che
+ * stacca le lettere sottili dagli occhi chiari e dalle pennellate del mostro.
+ * In `overlay` (provato) sulle zone scure la frase quasi spariva.
+ */
+.title {
+  --fit: 9.94;
+  white-space: nowrap;
+  font-size: calc(min(100cqw - 2.5rem, 80rem) * 0.95 / var(--fit));
+  text-shadow:
+    0 0.02em 0.08em rgb(2 8 23 / 0.9),
+    0 0.04em 0.45em rgb(2 8 23 / 0.75);
+  view-timeline-name: --risveglio;
+}
+
+@media (width < 48rem) {
+  .title {
+    --fit: 6.75;
+  }
+
+  .wide {
+    display: none;
+  }
+}
+
+@media (width >= 48rem) {
+  .phone {
+    display: none;
+  }
+}
+
+.word,
+.letter {
+  display: inline-block;
+}
+
+/*
+ * La dissolvenza segue lo scroll, senza JavaScript: ogni parola è legata alla
+ * posizione della frase nella finestra (`view-timeline`). Compare quando la
+ * frase sale dal fondo dello schermo ed è intera quando arriva a metà; ogni
+ * parola parte un po' dopo la precedente (`--i`).
+ * Tornando su, le parole spariscono nello stesso ordine al contrario.
+ *
+ * Solo opacità e spostamento: il browser li anima fuori dal thread
+ * principale, anche sul telefono. Dove le animazioni legate allo scroll non
+ * ci sono (Firefox) e con il movimento ridotto, la frase è semplicemente lì.
+ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .word {
+      animation: appear linear both;
+      animation-timeline: --risveglio;
+      animation-range: cover calc(8% + var(--i) * 4%) cover calc(24% + var(--i) * 4%);
+    }
+  }
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    translate: 0 0.3em;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}

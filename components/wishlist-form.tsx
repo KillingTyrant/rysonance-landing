@@ -163,19 +163,20 @@ export function WishlistForm({
             * sovrimpressione, così il form resta com'è; `nostyle` lascia il
             * link com'è disegnato qui. Senza script si apre in una scheda
             * nuova, per non perdere l'indirizzo già scritto.
-            * suppressHydrationWarning: lo script marca i link esterni prima
-            * dell'idratazione.
+            *
+            * Il link sta in uno <span> scritto come HTML già pronto, che React
+            * non ricontrolla quando si attiva: lo script di iubenda gli
+            * aggiunge accanto un suo <script> (`iubenda_i_badge.js`) e marca
+            * il link. Il form arriva in streaming (`live-wishlist-form.tsx`) e
+            * React lo attiva quando iubenda l'ha già toccato: con un <a>
+            * normale troverebbe un elemento in più e rifarebbe il form da capo.
             */}
-          <a
-            href={PRIVACY_POLICY_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            title="Privacy Policy"
-            className={`iubenda-nostyle iubenda-noiframe iubenda-embed underline underline-offset-2 ${t.link}`}
+          <span
             suppressHydrationWarning
-          >
-            Informativa privacy
-          </a>
+            dangerouslySetInnerHTML={{
+              __html: `<a href="${PRIVACY_POLICY_URL}" target="_blank" rel="noopener noreferrer" title="Privacy Policy" class="iubenda-nostyle iubenda-noiframe iubenda-embed underline underline-offset-2 ${t.link}">Informativa privacy</a>`,
+            }}
+          />
         </p>
       </div>
 
