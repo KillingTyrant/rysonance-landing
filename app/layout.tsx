@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import Script from "next/script";
 import { Footer } from "@/components/layout/footer";
 import "./globals.css";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from "./site";
 
 /**
  * I font del brand, self-hosted da `assets/fonts` (next/font/local li serve
@@ -18,31 +19,79 @@ const cabinet = localFont({
 });
 
 /**
- * Sprat Condensed Thin: le parole a tutta larghezza (COMBATTI, IMMAGINA).
- * Statico e non il variabile: SpratVF ha assi fuori standard (`wght` 10–200,
+ * Sprat Condensed, in due pesi statici: Thin (100) per le parole a tutta
+ * larghezza (COMBATTI, IMMAGINA) e Light (300), un peso sopra, per la frase sul
+ * Void Monster: lo Sprat più è piccolo più vuole peso, e la frase è molto più
+ * piccola delle due parole. Ognuno lo chiede col suo `font-thin`/`font-light`:
+ * senza, il peso normale (400) prenderebbe il Light.
+ * Statici e non il variabile: SpratVF ha assi fuori standard (`wght` 10–200,
  * `wdth` 100–200), che `font-weight` e `font-stretch` non raggiungono, e
- * servirebbe pilotarli a mano con `font-variation-settings` per un solo stile.
+ * servirebbe pilotarli a mano con `font-variation-settings`.
  *
- * `preload: false`: le due parole stanno in fondo alla pagina, e non serve
- * che il font arrivi prima di quello che si legge subito.
+ * `preload: false`: stanno a metà e in fondo alla pagina, e non serve che
+ * arrivino prima di quello che si legge subito. Il browser scarica ogni peso
+ * solo quando un testo lo usa.
  */
 const sprat = localFont({
-  src: "../assets/fonts/Sprat-CondensedThin.woff2",
-  weight: "100",
+  src: [
+    { path: "../assets/fonts/Sprat-CondensedThin.woff2", weight: "100" },
+    { path: "../assets/fonts/Sprat-CondensedLight.woff2", weight: "300" },
+  ],
   variable: "--font-sprat",
   preload: false,
 });
 
-// Dominio di produzione, non l'URL del singolo deploy (VERCEL_URL): serve ai link assoluti dei metadata.
-const productionHost = process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL;
-const defaultUrl = productionHost ? `https://${productionHost}` : "http://localhost:3000";
-
+/**
+ * Metadata di tutto il sito (titolo, descrizione e dominio in `site.ts`).
+ * Le pagine aggiungono il loro indirizzo canonico (`alternates`), che qui
+ * varrebbe per tutte. L'immagine per i social è `opengraph-image.jpg` (con la
+ * descrizione in `opengraph-image.alt.txt`), le icone le genera Next dai file
+ * app/favicon.ico, app/icon.svg e app/apple-icon.tsx.
+ */
 export const metadata: Metadata = {
-  metadataBase: new URL(defaultUrl),
-  title: "Rysonance — Il gioco di ruolo da tavolo connesso",
-  description:
-    "Rysonance è il gioco di ruolo da tavolo in cui la tua avventura è connessa a quella di ogni altro giocatore tramite un sistema online che rende l'esperienza sia immaginativa che digitale.",
-  // Icone: le genera Next dai file app/favicon.ico, app/icon.svg e app/apple-icon.tsx.
+  metadataBase: new URL(SITE_URL),
+  title: { default: SITE_TITLE, template: `%s — ${SITE_NAME}` },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  // Google le ignora, altri motori le leggono ancora.
+  keywords: [
+    "gioco di ruolo da tavolo",
+    "GdR",
+    "come iniziare a giocare di ruolo",
+    "giochi di ruolo per principianti",
+    "gioco di ruolo online",
+    "gioco di ruolo con app",
+    "party",
+    "Rysonance",
+  ],
+  category: "games",
+  openGraph: {
+    type: "website",
+    locale: "it_IT",
+    siteName: SITE_NAME,
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
+  // Anteprime grandi e testo intero: così Google (anche nelle risposte delle
+  // ricerche con l'IA) può mostrare l'illustrazione e citare il testo per
+  // intero. La pagina della cancellazione dalla wishlist dice di no per conto
+  // suo.
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
 };
 
 export const viewport: Viewport = {
@@ -57,6 +106,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${cabinet.variable} ${sprat.variable} h-full antialiased`}
     >
       <head>
+        {/*
+          * Il widget di iubenda (qui sotto) scarica a sua volta il banner dei
+          * cookie da cdn.iubenda.com: aprendo subito la connessione, il banner
+          * arriva un giro di rete prima (sulle connessioni lente è mezzo
+          * secondo e più).
+          */}
+        <link rel="preconnect" href="https://cdn.iubenda.com" />
         {/* Snippet iubenda: deve essere un <script> sincrono nell'HTML del server, altrimenti la verifica
             di iubenda non lo trova e il blocco automatico non intercetta gli script caricati prima.
             Prima dell'idratazione il widget inserisce in <head> un altro <script> (core-it.js) senza

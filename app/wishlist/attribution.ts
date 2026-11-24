@@ -26,6 +26,14 @@ type Field = (typeof ATTRIBUTION_FIELDS)[number];
 
 export type Attribution = Record<Field, string>;
 
+/** Nessuna attribuzione: il form della pagina pronta, prima di leggere la visita. */
+export const NO_ATTRIBUTION: Attribution = {
+  referrer: "",
+  utm_source: "",
+  utm_medium: "",
+  utm_campaign: "",
+};
+
 // Un referrer è una URL e può essere lungo; gli utm_* sono etichette. Oltre,
 // è qualcuno che sta provando a scrivere in tabella.
 const LIMITS: Record<Field, number> = {

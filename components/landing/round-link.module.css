@@ -1,0 +1,85 @@
+/*
+ * Il bottone piccolo e tutto tondo (vedi `round-link.tsx`): una pillola
+ * d'inchiostro col testo bianco, niente tacche. Come i bottoni a biglietto
+ * (`ticket.module.css`) ha i due pallini, nel colore del testo: da fermi sono
+ * fuori dalla pillola e non si vedono; al passaggio del mouse, al fuoco da
+ * tastiera e al clic entrano scorrendo da fuori verso l'interno.
+ */
+.pill {
+  --dot: 0.375rem;
+  /* Dove si fermano i pallini, dal bordo della pillola. */
+  --dot-in: 0.875rem;
+  /* Da fermi: appena fuori dal bordo. */
+  --dot-at: calc(var(--dot) * -1.5);
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.25rem;
+  /* Ai lati c'è posto per i pallini. */
+  padding: 0 2rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: #fff;
+  font-size: 0.9375rem;
+  font-weight: 800;
+  transition: transform 0.15s ease;
+}
+
+.pill::before,
+.pill::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: var(--dot);
+  height: var(--dot);
+  translate: 0 -50%;
+  border-radius: 50%;
+  background: currentColor;
+  transition:
+    left 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    right 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.pill::before {
+  left: var(--dot-at);
+}
+
+.pill::after {
+  right: var(--dot-at);
+}
+
+/* Il passaggio del mouse solo dove esiste davvero (non sui touch). */
+@media (hover: hover) {
+  .pill:hover {
+    --dot-at: var(--dot-in);
+  }
+}
+
+.pill:focus-visible,
+.pill:active {
+  --dot-at: var(--dot-in);
+}
+
+.pill:active {
+  transform: translateY(1px);
+}
+
+.pill:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pill,
+  .pill::before,
+  .pill::after {
+    transition: none;
+  }
+
+  .pill:active {
+    transform: none;
+  }
+}

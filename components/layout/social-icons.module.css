@@ -1,0 +1,36 @@
+/*
+ * Il tremolio dell'icona di Discord prima di «In arrivo» (vedi
+ * `social-icons.tsx`): oscilla sempre meno e torna ferma. Con il movimento
+ * ridotto non c'è.
+ */
+.shake {
+  animation: shake 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  transform-origin: 50% 60%;
+}
+
+@keyframes shake {
+  15% {
+    transform: translateX(-2px) rotate(-10deg);
+  }
+  30% {
+    transform: translateX(2px) rotate(9deg);
+  }
+  45% {
+    transform: translateX(-2px) rotate(-7deg);
+  }
+  60% {
+    transform: translateX(1px) rotate(5deg);
+  }
+  75% {
+    transform: translateX(-1px) rotate(-3deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shake {
+    animation: none;
+  }
+}

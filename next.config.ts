@@ -26,6 +26,15 @@ const SECURITY_HEADERS = [
 ];
 
 const nextConfig: NextConfig = {
+  // Le pagine si preparano alla build e Vercel le manda già pronte dalla sua
+  // rete; solo i pezzi che dipendono dalla singola visita (i form della
+  // wishlist, vedi `components/live-wishlist-form.tsx`) arrivano dopo, nella
+  // stessa risposta. Sulle connessioni lente è il guadagno più grande.
+  cacheComponents: true,
+  // I link interni scaricano in anticipo solo la parte pronta della pagina
+  // d'arrivo (consigliato da Next 16 per i progetti nuovi con i Cache
+  // Components; qui non ci sono link con `prefetch` da migrare).
+  partialPrefetching: true,
   // Senza, ogni risposta dice `X-Powered-By: Next.js`: un'informazione in
   // più per chi cerca le versioni vulnerabili, e a noi non serve.
   poweredByHeader: false,

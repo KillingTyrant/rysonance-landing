@@ -18,6 +18,16 @@
 }
 
 /*
+ * `wide:` — da tablet (48rem, come `md:`) e con lo schermo almeno largo quanto
+ * alto. Lì il Void Monster fa da sfondo al blocco fermo di «Esplora» e
+ * continua sotto (vedi `app/page.tsx`). Su uno schermo in verticale, anche da
+ * tablet, il mostro starebbe quasi tutto dietro «Esplora» e sotto non
+ * resterebbe posto per la frase: lì si comporta come sul telefono, intero
+ * dopo «Esplora».
+ */
+@custom-variant wide (@media (width >= 48rem) and (min-aspect-ratio: 1/1));
+
+/*
  * I layout desktop sono disegnati su 1440px. Oltre quella larghezza la pagina
  * cresce in proporzione invece di restare una colonna di 960px in mezzo allo
  * schermo: la dimensione base segue la finestra (16px a 1440, 21,33px a 1920,
